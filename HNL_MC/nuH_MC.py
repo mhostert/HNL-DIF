@@ -13,11 +13,9 @@ from matplotlib import rc, rcParams
 from matplotlib.pyplot import *
 from matplotlib.legend_handler import HandlerLine2D
 
-import fourvec
-import hist_plot
-import const 
-import model 
-import nuH_integrands as integrands
+from . import const 
+from . import model 
+from . import nuH_integrands as integrands
 
 # Integration parameters
 NINT = 20
@@ -33,7 +31,7 @@ def lam(a,b,c):
 
 
 class MC_events:
-	def __init__(self, HNLtype= const.MAJORANA, EN=1.0, ENmin = 0.0, ENmax=10.0, mh=0.150, mf=0.0, mp=const.Me, mm=const.Me, helicity=-1, BSMparams=None):
+	def __init__(self, HNLtype= "MAJORANA", EN=1.0, ENmin = 0.0, ENmax=10.0, mh=0.150, mf=0.0, mp=const.m_e, mm=const.m_e, helicity=-1, BSMparams=None):
 		
 		self.params = BSMparams
 		
@@ -108,7 +106,7 @@ class MC_events:
 		
 		P1LAB_decay, P2LAB_decay, P3LAB_decay, P4LAB_decay = integrands.N_to_nu_ell_ell_phase_space(samples=SAMPLES, MC_case=self)
 
-		return P1LAB_decay, P2LAB_decay, P3LAB_decay, P4LAB_decay, weights*const.GeV2_to_cm2, mean*const.GeV2_to_cm2
+		return P1LAB_decay, P2LAB_decay, P3LAB_decay, P4LAB_decay, weights*const.gweakeV2_to_cm2, mean*const.gweakeV2_to_cm2
 
 
 

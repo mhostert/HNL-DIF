@@ -146,10 +146,10 @@ class MC_events:
 
 		if Mn - Mn_outgoing > Mzprime:
 			weights *= 1.0/decay_rates.N_total(params)/decay_rates.Z_total(params)
-			return integrands.cascade_phase_space(samples=SAMPLES, MC_case=self, w=weights*const.GeV2_to_cm2, I=result.mean*const.GeV2_to_cm2)
+			return integrands.cascade_phase_space(samples=SAMPLES, MC_case=self, w=weights*const.gweakeV2_to_cm2, I=result.mean*const.gweakeV2_to_cm2)
 		elif Mn - Mn_outgoing < Mzprime:
 			weights *= 1.0/self.decay_prop.total_rate()
-			return integrands.three_body_phase_space(samples=SAMPLES, MC_case=self, w=weights*const.GeV2_to_cm2, I=result.mean*const.GeV2_to_cm2)
+			return integrands.three_body_phase_space(samples=SAMPLES, MC_case=self, w=weights*const.gweakeV2_to_cm2, I=result.mean*const.gweakeV2_to_cm2)
 
 
 def Combine_MC_output(cases, Ifactors=None, flags=None):

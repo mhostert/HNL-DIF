@@ -5,6 +5,10 @@ from matplotlib.pyplot import *
 from matplotlib.legend_handler import HandlerLine2D
 
 
+#########################################################
+# SOME OLD CRAP
+#########################################################
+
 def histogram_coh_dif(plotname, DATACOH, DATADIF, TMIN, TMAX,  XLABEL, TITLE, nbins):
 	
 	fsize = 11
