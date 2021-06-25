@@ -10,6 +10,11 @@ from particle import literals as lp
 # import source 
 from .const import *
 
+
+############################################################
+# all rates have been checked against Ref. arxiv.org/abs/2007.03701
+############################################################
+
 neutrino4 = 1
 def tau_GeV_to_s(decay_rate):
 	return 1./decay_rate/1.52/1e24
@@ -22,75 +27,6 @@ def lam(a,b,c):
 
 def I1_2body(x,y):
 	return ((1+x-y)*(1+x) - 4*x)*np.sqrt(lam(1.0,x,y))
-
-
-class N_decay:
-	def __init__(self,params):
-
-		self.params=params
-
-	def compute_rates(self):
-		
-		# Bsm parameters
-		params = self.params
-		
-		##################
-		# Neutrino 4
-		mh = self.params.m4
-		rates = {}
-		neutrinos = [lp.nu_e, lp.nu_mu, lp.nu_tau]
-
-		# channels with 3 neutrinos in final state
-		rates['R_nu_nu_nu'] = 0.0
-		for nu_a in neutrinos:
-			for nu_b in neutrinos:
-				rates['R_nu_nu_nu'] += nui_nuj_nuk_nuk(params, neutrino4, nu_a, nu_b, nu_b)
-
-		# channels with 1 neutrino in final states
-		rates['R_nu_e_e'] = 0
-		rates['R_nu_mu_mu'] = 0
-		rates['R_nu_e_mu'] = 0
-		rates['R_nu_pi'] = 0 
-		rates['R_nu_eta'] = 0
-		for nu_a in neutrinos:
-			# dileptons -- already contains the Delta L = 2 channel
-			if mh > 2*lp.e_minus.mass/1e3:
-				rates['R_nu_e_e'] = nui_nuj_ell1_ell2(params, neutrino4, nu_a, lp.e_minus, lp.e_plus)
-			if mh > lp.e_minus.mass/1e3 + lp.mu_minus.mass/1e3:
-				rates['R_nu_e_mu'] = nui_nuj_ell1_ell2(params, neutrino4, nu_a, lp.e_minus, lp.mu_plus)
-			if mh > 2*lp.mu_minus.mass/1e3:
-				rates['R_nu_mu_mu'] = nui_nuj_ell1_ell2(params, neutrino4, nu_a, lp.mu_minus, lp.mu_plus)
-			# pseudoscalar -- neutral current
-			if mh > lp.pi_0.mass/1e3:
-				rates['R_nu_pi'] = nui_nu_P(params, neutrino4, nu_a, lp.pi_0)
-			if mh > lp.eta.mass/1e3:
-				rates['R_nu_eta'] = nui_nu_P(params, neutrino4, nu_a, lp.eta)
-			
-
-		# CC-only channels	
-		# pseudoscalar -- factor of 2 for delta L=2 channel 
-		if mh > lp.e_minus.mass/1e3+lp.pi_plus.mass/1e3:
-			rates['R_e_pi'] = 2*nui_l_P(params, neutrino4, lp.e_minus, lp.pi_plus)
-		if mh > lp.e_minus.mass/1e3+lp.K_plus.mass/1e3:
-			rates['R_e_K'] = 2*nui_l_P(params, neutrino4, lp.e_minus, lp.K_plus)
-		
-		# pseudoscalar -- already contain the Delta L = 2 channel
-		if mh > lp.mu_minus.mass/1e3+lp.pi_plus.mass/1e3:
-			rates['R_mu_pi'] = 2*nui_l_P(params, neutrino4, lp.mu_minus, lp.pi_plus)
-		if mh > lp.mu_minus.mass/1e3+lp.K_plus.mass/1e3:
-			rates['R_mu_K'] = 2*nui_l_P(params, neutrino4, lp.mu_minus, lp.K_plus)
-	
-		self.rates = rates			
-
-	def total_rate(self):
-		self.rate_total = np.sum(self.rates.values())
-		return self.rate_total
-
-	def compute_BR(self):
-		brs = {}
-		for channel in rates.keys():
-			brs[f'B{channel}'] = self.rates[channel]/self.rate_total
-		self.brs = brs
 
 
 def nui_l_P(params, initial_neutrino, final_lepton, final_hadron):
@@ -107,14 +43,14 @@ def nui_l_P(params, initial_neutrino, final_lepton, final_hadron):
 
 	if (final_hadron==lp.pi_plus):
 		Vqq = Vud
-		fp  = Fcharged_pion
+		fp  = fcharged_pion
 	elif(final_hadron==lp.K_plus):
 		Vqq = Vus
-		fp  = Fcharged_kaon
+		fp  = fcharged_kaon
 	else:
 		print(f"Meson {final_hadron.name} no supported.")
 
-	return np.where( mh-mp-ml > 0, (Gf*fp*CC_mixing*Vqq)**2 * mh**3/(16*np.pi) * I1_2body((ml/mh)**2, (mp/mh)**2), 0.0)
+	return (Gf*fp*CC_mixing*Vqq)**2 * mh**3/(16*np.pi) * I1_2body((ml/mh)**2, (mp/mh)**2)
 
 
 
@@ -128,12 +64,14 @@ def nui_nu_P(params, initial_neutrino, final_neutrino, final_hadron):
 					+ in_e_doublet(final_neutrino)*params.Ue4**2)
 
 	if (final_hadron==lp.pi_0):
-		fp  = Fneutral_pion
+		fp  = fneutral_pion
 	elif(final_hadron==lp.eta):
-		fp  = Fneutral_eta
+		fp  = fneutral_eta
+	else:
+		fp=0
+		print(f"Hadron {final.hadron} not supported")
 
-
-	return np.where( mh - mp > 0, (Gf*fp*NC_mixing)**2*mh**3/(64*np.pi)*(1-(mp/mh)**2)**2, 0)
+	return (Gf*fp*NC_mixing)**2*mh**3/(32*np.pi)*(1-(mp/mh)**2)**2
 
 
 ###############################
@@ -146,7 +84,7 @@ def nui_nuj_ell1_ell2(params, initial_neutrino, final_neutrino, final_lepton1, f
 	mf = 0.0
 
 	# NC
-	if final_lepton2==final_lepton1:
+	if final_lepton2.pdgid.abspid==final_lepton1.pdgid.abspid:
 		
 		NCflag=1
 
@@ -232,8 +170,7 @@ def nui_nuj_ell1_ell2(params, initial_neutrino, final_neutrino, final_lepton1, f
 												tplus,
 												args=(mh,mf,mp,mm,NCflag,CCflag1,CCflag2,Cv,Ca,Dv,Da,Cih,Dih,MZBOSON,MZPRIME,MW),\
 												epsabs=1.49e-08, epsrel=1.49e-08)
-
-	return integral
+	return integral*4
 
 
 
@@ -246,7 +183,7 @@ def nui_nuj_nuk_nuk(params, initial_neutrino, final_neutrinoj, final_neutrinok1,
 					+ in_mu_doublet(final_neutrinoj)*params.Umu4**2
 					+ in_e_doublet(final_neutrinoj)*params.Ue4**2)
 
-	return Gf**2/288/np.pi**3*mh**5 * NC_mixing**2
+	return Gf**2/192.0/np.pi**3*mh**5 * NC_mixing**2
 
 	
 	# Cki = 0

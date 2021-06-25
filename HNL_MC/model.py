@@ -1,5 +1,7 @@
 import numpy as np
-from . import const 
+from .const import * 
+from .rates import *
+
 
 class hnl_model():
 
@@ -10,9 +12,9 @@ class hnl_model():
 		if self.minimal:
 			self.gprime		= 0.0
 			self.chi		= 0.0
-			self.Ue4		= mixings[0]
-			self.Umu4		= mixings[1]
-			self.Utau4		= mixings[2]
+			self.Ue4		= np.sqrt(mixings[0])
+			self.Umu4		= np.sqrt(mixings[1])
+			self.Utau4		= np.sqrt(mixings[2])
 			self.Ue5		= 0.0
 			self.Umu5		= 0.0
 			self.Utau5		= 0.0
@@ -44,9 +46,9 @@ class hnl_model():
 
 
 		# Neutrino couplings ## CHECK THE SIGN IN THE SECOND TERM????
-		self.ce5 = const.gweak/2/const.cw* (self.Ue5) + self.UD5*(-self.UD4*self.Ue4 -self.UD5*self.Ue5)*self.gprime*const.sw*self.chi
-		self.cmu5 = const.gweak/2/const.cw* (self.Umu5) + self.UD5*(-self.UD4*self.Umu4 -self.UD5*self.Umu5)*self.gprime*const.sw*self.chi
-		self.ctau5 = const.gweak/2/const.cw* (self.Utau5) + self.UD5*(-self.UD4*self.Utau4 -self.UD5*self.Utau5)*self.gprime*const.sw*self.chi
+		self.ce5 = gweak/2/cw* (self.Ue5) + self.UD5*(-self.UD4*self.Ue4 -self.UD5*self.Ue5)*self.gprime*sw*self.chi
+		self.cmu5 = gweak/2/cw* (self.Umu5) + self.UD5*(-self.UD4*self.Umu4 -self.UD5*self.Umu5)*self.gprime*sw*self.chi
+		self.ctau5 = gweak/2/cw* (self.Utau5) + self.UD5*(-self.UD4*self.Utau4 -self.UD5*self.Utau5)*self.gprime*sw*self.chi
 		
 	
 		self.de5 = self.UD5*(-self.UD4*self.Ue5 - self.UD5*self.Ue5)*self.gprime
@@ -54,9 +56,9 @@ class hnl_model():
 		self.dtau5 = self.UD5*(-self.UD4*self.Utau5 - self.UD5*self.Utau5)*self.gprime
 
 
-		self.ce4 = const.gweak/2/const.cw* (self.Ue4) + self.UD4*(-self.UD4*self.Ue4 -self.UD5*self.Ue5)*self.gprime*const.sw*self.chi
-		self.cmu4 = const.gweak/2/const.cw* (self.Umu4) + self.UD4*(-self.UD4*self.Umu4 -self.UD5*self.Umu5)*self.gprime*const.sw*self.chi
-		self.ctau4 = const.gweak/2/const.cw* (self.Utau4) + self.UD4*(-self.UD4*self.Utau4 -self.UD5*self.Utau5)*self.gprime*const.sw*self.chi
+		self.ce4 = gweak/2/cw* (self.Ue4) + self.UD4*(-self.UD4*self.Ue4 -self.UD5*self.Ue5)*self.gprime*sw*self.chi
+		self.cmu4 = gweak/2/cw* (self.Umu4) + self.UD4*(-self.UD4*self.Umu4 -self.UD5*self.Umu5)*self.gprime*sw*self.chi
+		self.ctau4 = gweak/2/cw* (self.Utau4) + self.UD4*(-self.UD4*self.Utau4 -self.UD5*self.Utau5)*self.gprime*sw*self.chi
 		
 		self.de4 = self.UD4*(-self.UD4*self.Ue4 - self.UD5*self.Ue4)*self.gprime
 		self.dmu4 = self.UD4*(-self.UD4*self.Umu4 - self.UD5*self.Umu4)*self.gprime
@@ -68,35 +70,15 @@ class hnl_model():
 		self.clight5 = np.sqrt(self.ce5**2+self.cmu5**2+self.ctau5**2)
 		self.dlight5 = np.sqrt(self.de5**2+self.dmu5**2+self.dtau5**2)
 
-		self.c45 = const.gweak/2/const.cw* (np.sqrt(self.Uactive4SQR*self.Uactive5SQR)) + self.UD5*self.UD4*self.gprime*const.sw*self.chi
-		self.c44 = const.gweak/2/const.cw* (np.sqrt(self.Uactive4SQR*self.Uactive4SQR)) + self.UD4*self.UD4*self.gprime*const.sw*self.chi
-		self.c55 = const.gweak/2/const.cw* (np.sqrt(self.Uactive5SQR*self.Uactive5SQR)) + self.UD5*self.UD5*self.gprime*const.sw*self.chi
+		self.c45 = gweak/2/cw* (np.sqrt(self.Uactive4SQR*self.Uactive5SQR)) + self.UD5*self.UD4*self.gprime*sw*self.chi
+		self.c44 = gweak/2/cw* (np.sqrt(self.Uactive4SQR*self.Uactive4SQR)) + self.UD4*self.UD4*self.gprime*sw*self.chi
+		self.c55 = gweak/2/cw* (np.sqrt(self.Uactive5SQR*self.Uactive5SQR)) + self.UD5*self.UD5*self.gprime*sw*self.chi
 		self.d45 = self.UD5*self.UD4*self.gprime
 		self.d44 = self.UD4*self.UD4*self.gprime
 		self.d55 = self.UD5*self.UD5*self.gprime
 
-		self.clight = const.gweak/2/const.cw
+		self.clight = gweak/2/cw
 		self.dlight = 0.0
-
-
-		# BSM-like couplings
-		# self.de4 = self.UD4*self.Ue1*self.UD1 * (self.gprime/const.gweak)
-		# self.dmu4 = self.UD4*self.Umu1*self.UD1 * (self.gprime/const.gweak)
-		# self.dtau4 = self.UD4*self.Utau1*self.UD1 * (self.gprime/const.gweak)
-
-		# self.de5 = self.UD5*self.Ue1*self.UD1* self.gprime/const.gweak
-		# self.dmu5 = self.UD5*self.Umu1*self.UD1* self.gprime/const.gweak
-		# self.dtau5 = self.UD5*self.Utau1*self.UD1* self.gprime/const.gweak
-
-		# SM-like couplings
-		# self.ce4 = self.UD4*self.Ue1*self.UD1 * (0.5 - self.gprime/const.gweak*const.sw*const.cw*self.chi)
-		# self.cmu4 = self.UD4*self.Umu1*self.UD1 * (0.5 - self.gprime/const.gweak*const.sw*const.cw*self.chi)
-		# self.ctau4 = self.UD4*self.Utau1*self.UD1 * (0.5 - self.gprime/const.gweak*const.sw*const.cw*self.chi)
-
-		# self.ce5 = self.UD5*self.Ue1*self.UD1 * (0.5 - self.gprime/const.gweak*const.sw*const.cw*self.chi)
-		# self.cmu5 = self.UD5*self.Umu1*self.UD1 * (0.5 - self.gprime/const.gweak*const.sw*const.cw*self.chi)
-		# self.ctau5 = self.UD5*self.Utau1*self.UD1 * (0.5 - self.gprime/const.gweak*const.sw*const.cw*self.chi)
-
 
 		# Kinetic mixing
 		##############
@@ -107,9 +89,9 @@ class hnl_model():
 
 		s2chi = (1.0 - cosof2chi)/2.0
 
-		tanof2beta = np.sqrt(const.s2w) *  sinof2chi / ( (self.Mzprime/const.vev_EW)**2 - cosof2chi - (1.0-const.s2w)*s2chi )
+		tanof2beta = np.sqrt(s2w) *  sinof2chi / ( (self.Mzprime/vev_EW)**2 - cosof2chi - (1.0-s2w)*s2chi )
 
-		self.epsilon = const.cw*self.chi
+		self.epsilon = cw*self.chi
 
 		######################
 		# CHECK ME! I dont think this reproduces the SM limit when tanof2beta = 0
@@ -117,7 +99,7 @@ class hnl_model():
 			tbeta = (-1 + np.sign(tanof2beta) * np.sqrt( 1 + tanof2beta*tanof2beta) )
 		else:
 			tbeta = 0.0
-				
+
 		sinof2beta = 2 * tbeta/(1.0+tbeta*tbeta)
 		cosof2beta = (1.0-tbeta*tbeta)/(1.0+tbeta*tbeta)
 		######################
@@ -127,31 +109,102 @@ class hnl_model():
 
 
 		# Charged leptons
-		# self.ceV = cbeta*(2*const.s2w - 0.5) - 3.0/2.0*sbeta*const.sw*tanchi
-		# self.ceA = -(cbeta - sbeta*const.sw*tanchi)/2.0
-		self.ceV = const.gweak/(2*const.cw) * (2*const.s2w - 0.5)
-		self.ceA = const.gweak/(2*const.cw) * (-1.0/2.0)
+		# self.ceV = cbeta*(2*s2w - 0.5) - 3.0/2.0*sbeta*sw*tanchi
+		# self.ceA = -(cbeta - sbeta*sw*tanchi)/2.0
+		self.ceV = gweak/(2*cw) * (2*s2w - 0.5)
+		self.ceA = gweak/(2*cw) * (-1.0/2.0)
 
 		# quarks
-		self.cuV = cbeta*(0.5 - 4*const.s2w/3.0) + 5.0/6.0*sbeta*const.sw*tanchi
-		self.cuA = (cbeta + sbeta*const.sw*tanchi)/2.0
+		self.cuV = cbeta*(0.5 - 4*s2w/3.0) + 5.0/6.0*sbeta*sw*tanchi
+		self.cuA = (cbeta + sbeta*sw*tanchi)/2.0
 
-		self.cdV = cbeta*(-0.5 + 2*const.s2w/3.0) - 1.0/6.0*sbeta*const.sw*tanchi
-		self.cdA = -(cbeta + sbeta*const.sw*tanchi)/2.0
+		self.cdV = cbeta*(-0.5 + 2*s2w/3.0) - 1.0/6.0*sbeta*sw*tanchi
+		self.cdA = -(cbeta + sbeta*sw*tanchi)/2.0
 
 		# if not self.minimal:
-		# self.deV = 3.0/2.0 * cbeta * const.s2w * tanchi + sbeta*(0.5 + 2*const.s2w)
-		# self.deA = (-sbeta - cbeta * const.s2w * tanchi)/2.0
-		self.deV = const.gweak/(2*const.cw) * 2*const.sw*const.cw**2*self.chi
-		self.deA = const.gweak/(2*const.cw) * 0
+		# self.deV = 3.0/2.0 * cbeta * s2w * tanchi + sbeta*(0.5 + 2*s2w)
+		# self.deA = (-sbeta - cbeta * s2w * tanchi)/2.0
+		self.deV = gweak/(2*cw) * 2*sw*cw**2*self.chi
+		self.deA = gweak/(2*cw) * 0
 
-		self.duV = sbeta*(0.5 - 4*const.s2w/3.0) - 5.0/6.0*cbeta*const.sw*tanchi
-		self.duA = (sbeta + cbeta*const.sw*tanchi)/2.0
+		self.duV = sbeta*(0.5 - 4*s2w/3.0) - 5.0/6.0*cbeta*sw*tanchi
+		self.duA = (sbeta + cbeta*sw*tanchi)/2.0
 
-		self.ddV = sbeta*(-0.5 + 2*const.s2w/3.0) + 1.0/6.0*cbeta*const.sw*tanchi
-		self.ddA = -(sbeta + cbeta*const.sw*tanchi)/2.0
+		self.ddV = sbeta*(-0.5 + 2*s2w/3.0) + 1.0/6.0*cbeta*sw*tanchi
+		self.ddA = -(sbeta + cbeta*sw*tanchi)/2.0
 
-		self.gVproton = -3.0/2.0*const.sw*self.chi*(1-8.0/9.0*const.s2w)#2*self.duV +self.ddV
+		self.gVproton = -3.0/2.0*sw*self.chi*(1-8.0/9.0*s2w)#2*self.duV +self.ddV
 		self.gAproton = 2*self.duA + self.ddA
 		self.gVneutron = 2*self.ddV + self.duV
 		self.gAneutron = 2*self.ddA + self.duA
+
+	def compute_rates(self):
+		
+		
+		##################
+		# Neutrino 4
+		mh = self.m4
+		rates = {}
+		neutrinos = [lp.nu_e, lp.nu_mu, lp.nu_tau]
+
+		# channels with 3 neutrinos in final state
+		rates['nu_nu_nu'] = 0.0
+		for nu_a in neutrinos:
+			for nu_b in neutrinos:
+				rates['nu_nu_nu'] += nui_nuj_nuk_nuk(self, neutrino4, nu_a, nu_b, nu_b)
+
+		# channels with 1 neutrino in final states
+		rates['nu_e_e'] = 0
+		rates['nu_mu_mu'] = 0
+		rates['nu_e_mu'] = 0
+		rates['nu_pi'] = 0 
+		rates['nu_eta'] = 0
+		rates['e_pi'] = 0
+		rates['e_K'] = 0
+		rates['mu_pi'] = 0
+		rates['mu_K'] = 0
+
+		for nu_a in neutrinos:
+			# dileptons -- already contains the Delta L = 2 channel
+			if mh > 2*lp.e_minus.mass/1e3:
+				rates['nu_e_e'] += nui_nuj_ell1_ell2(self, neutrino4, nu_a, lp.e_minus, lp.e_plus)
+			if mh > lp.e_minus.mass/1e3 + lp.mu_minus.mass/1e3:
+				rates['nu_e_mu'] += nui_nuj_ell1_ell2(self, neutrino4, nu_a, lp.e_minus, lp.mu_plus)
+			if mh > 2*lp.mu_minus.mass/1e3:
+				rates['nu_mu_mu'] += nui_nuj_ell1_ell2(self, neutrino4, nu_a, lp.mu_minus, lp.mu_plus)
+			# pseudoscalar -- neutral current
+			if mh > lp.pi_0.mass/1e3:
+				rates['nu_pi'] += nui_nu_P(self, neutrino4, nu_a, lp.pi_0)
+			if mh > lp.eta.mass/1e3:
+				rates['nu_eta'] += nui_nu_P(self, neutrino4, nu_a, lp.eta)
+			
+
+		# CC-only channels	
+		# pseudoscalar -- factor of 2 for delta L=2 channel 
+		if mh > lp.e_minus.mass/1e3+lp.pi_plus.mass/1e3:
+			rates['e_pi'] = 2*nui_l_P(self, neutrino4, lp.e_minus, lp.pi_plus)
+		if mh > lp.e_minus.mass/1e3+lp.K_plus.mass/1e3:
+			rates['e_K'] = 2*nui_l_P(self, neutrino4, lp.e_minus, lp.K_plus)
+		
+		# pseudoscalar -- already contain the Delta L = 2 channel
+		if mh > lp.mu_minus.mass/1e3+lp.pi_plus.mass/1e3:
+			rates['mu_pi'] = 2*nui_l_P(self, neutrino4, lp.mu_minus, lp.pi_plus)
+		if mh > lp.mu_minus.mass/1e3+lp.K_plus.mass/1e3:
+			rates['mu_K'] = 2*nui_l_P(self, neutrino4, lp.mu_minus, lp.K_plus)
+	
+		self.rates = rates			
+
+		# total decay rate
+		self.rate_total = sum(self.rates.values())
+
+		# total decay rate
+		self.lifetime = get_decay_rate_in_s(self.rate_total)
+		self.ctau0 = get_decay_rate_in_cm(self.rate_total)
+
+		# Branchin ratios
+		brs = {}
+		for channel in self.rates.keys():
+			brs[channel] = self.rates[channel]/self.rate_total
+		self.brs = brs
+
+

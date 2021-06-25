@@ -55,9 +55,9 @@ MAG_P = 2.792
 
 ################################################
 # Mesons
-Fcharged_pion = 0.1307
-Fcharged_kaon = 0.1598
-Fcharged_rho = 0.220
+fcharged_pion = 0.1307
+fcharged_kaon = 0.1598
+fcharged_rho = 0.220
 
 fneutral_pion = 0.130
 fneutral_kaon = 0.164
@@ -136,7 +136,6 @@ def get_decay_rate_in_s(G):
 	return 1.0/G*invGeV_to_s
 def get_decay_rate_in_cm(G):
 	return 1.0/G*invGeV_to_cm
-
 
 ################################################
 # auxiliary functions -- scikit-hep particles

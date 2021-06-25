@@ -15,7 +15,7 @@ pyximport.install(
 from . import fourvec # python only
 from . import Cfourvec as Cfv # cython
 
-from . import hnl_flux_gen
+from . import hnl_tools
 from . import model
 from . import rates
 from . import nuH_integrands

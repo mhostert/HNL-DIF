@@ -28,6 +28,10 @@ class experiment():
 				
 				"name" : "nd280/FHC",
 				"flux_norm" : 1.0/1e21/0.05,
+				"area" : 1.7e2*1.96e2, # cm^2
+				"length" : 56*3, # cm
+				"baseline" : 280e2, # cm
+				"eff" : lambda x: 0.05,
 				"emin" : 0.05,
 				"emax" : 10.0,
 				"pots" : 12.34e20,
@@ -39,6 +43,10 @@ class experiment():
 				
 				"name" : "nd280/RHC",
 				"flux_norm" : 1.0/1e21/0.05,
+				"area" : 1.7e2*1.96e2, # cm^2
+				"length" : 56*3, # cm
+				"baseline" : 280e2, # cm
+				"eff" : lambda x: 0.05,
 				"emin" : 0.05,
 				"emax" : 10.0,
 				"pots" : 6.29e20,
