@@ -22,8 +22,23 @@ m_e =  0.5109989500015e-3 # GeV
 m_mu =  0.1134289257 # GeV
 m_tau =  1.77682 # GeV
 
+# charged hadrons
+Mcharged_pion = 0.1396
+Mcharged_rho = 0.7758
 
+# neutral hadrons
+Mneutral_pion = 0.135
+Mneutral_eta = 0.5478
+Mneutral_rho = 0.7755
 
+Mneutral_B = 5.27958
+Mcharged_B = 5.27958
+
+Mneutral_kaon = 0.497611
+Mcharged_kaon = 0.4937
+Mcharged_kaonstar = 0.892
+
+print(Mcharged_pion - m_mu)
 ################################################
 # QED
 alphaQED = 1.0/137.03599908421 # Fine structure constant at q2 -> 0
