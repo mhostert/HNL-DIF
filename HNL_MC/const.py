@@ -38,7 +38,6 @@ Mneutral_kaon = 0.497611
 Mcharged_kaon = 0.4937
 Mcharged_kaonstar = 0.892
 
-print(Mcharged_pion - m_mu)
 ################################################
 # QED
 alphaQED = 1.0/137.03599908421 # Fine structure constant at q2 -> 0
@@ -170,3 +169,23 @@ def in_mu_doublet(p):
 
 def in_tau_doublet(p):
 	return p.pdgid.abspid in [15,16]
+
+def get_doublet(p):
+	if in_e_doublet(p):
+		return 0
+	elif in_mu_doublet(p):
+		return 1
+	elif in_tau_doublet(p):
+		return 2
+	else:
+		print(f"Could not find doublet of {p.name}.")
+		return 0
+def same_doublet(p1,p2):
+	return get_doublet(p1) == get_doublet(p2)
+def same_particle(p1,p2):
+	return p1.pdgid.abspid == p2.pdgid.abspid
+def is_particle(p):
+	return p.pdgid.abspid > 0 
+def is_antiparticle(p):
+	return p.pdgid.abspid < 0 
+

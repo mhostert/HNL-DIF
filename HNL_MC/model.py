@@ -5,7 +5,7 @@ from .rates import *
 
 class hnl_model():
 
-	def __init__(self, m4, mixings = [0.0,0.0,0.0], minimal=True, HNLtype="Majorana"):
+	def __init__(self, m4, mixings = [0.0,0.0,0.0], minimal=True, HNLtype="dirac"):
 
 		self.minimal = minimal
 		
@@ -23,7 +23,7 @@ class hnl_model():
 			self.m4			= m4
 			self.m5			= 1e10
 			self.Mzprime	= 1e10
-			self.Dirac		= HNLtype
+			self.HNLtype		= HNLtype
 
 		else:
 			print("Non-minimal model not supported")
@@ -150,8 +150,7 @@ class hnl_model():
 		# channels with 3 neutrinos in final state
 		rates['nu_nu_nu'] = 0.0
 		for nu_a in neutrinos:
-			for nu_b in neutrinos:
-				rates['nu_nu_nu'] += nui_nuj_nuk_nuk(self, neutrino4, nu_a, nu_b, nu_b)
+			rates['nu_nu_nu'] += nui_nuj_nuk_nuk(self, neutrino4, nu_a)
 
 		# channels with 1 neutrino in final states
 		rates['nu_e_e'] = 0
@@ -170,6 +169,7 @@ class hnl_model():
 				rates['nu_e_e'] += nui_nuj_ell1_ell2(self, neutrino4, nu_a, lp.e_minus, lp.e_plus)
 			if mh > lp.e_minus.mass/1e3 + lp.mu_minus.mass/1e3:
 				rates['nu_e_mu'] += nui_nuj_ell1_ell2(self, neutrino4, nu_a, lp.e_minus, lp.mu_plus)
+				rates['nu_e_mu'] += nui_nuj_ell1_ell2(self, neutrino4, nu_a, lp.mu_minus, lp.e_plus)
 			if mh > 2*lp.mu_minus.mass/1e3:
 				rates['nu_mu_mu'] += nui_nuj_ell1_ell2(self, neutrino4, nu_a, lp.mu_minus, lp.mu_plus)
 			# pseudoscalar -- neutral current
