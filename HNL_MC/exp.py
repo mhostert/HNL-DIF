@@ -35,7 +35,7 @@ class experiment():
 				"emin" : 0.05,
 				"emax" : 10.0,
 				"pots" : 12.34e20,
-				"flavors" : [lp.nu_mu],
+				"flavors" : [lp.nu_mu,lp.nubar_mu],
 			}
 
 		elif self.EXP_FLAG == ND280_RHC:
@@ -50,7 +50,7 @@ class experiment():
 				"emin" : 0.05,
 				"emax" : 10.0,
 				"pots" : 6.29e20,
-				"flavors" : [lp.nu_mu_bar],
+				"flavors" : [lp.nu_mu_bar,lp.nu_mu],
 			}
 		
 		else:

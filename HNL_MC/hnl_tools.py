@@ -63,26 +63,30 @@ def get_event_rate(args, flavor_struct=[1.0,1.0,1.0], exp_setup = exp.ND280_FHC)
 	my_hnl.compute_rates()
 
 	my_exp = exp.experiment(exp_setup)
-	fK = my_exp.get_flux_func(parent=lp.K_plus)
-	fN = lambda pN: dphi_dEN_app(fK, pN, Ualpha4SQR=USQR, mN=M4, parent=lp.K_plus, daughter=lp.mu_plus)
-
-	x = np.linspace(1e-2,10.0,1000)
-	dx = (x[1]-x[0])
 	
-	# integrate N spectrum
-	events = 0
-	norm = my_exp.prop['pots']*my_exp.prop['area']*my_exp.prop['eff'](M4)
-	for pN in x:
-		#boost
-		gamma = np.sqrt(pN**2+my_hnl.m4**2)/my_hnl.m4
-		# dN/dpN
-		events += prob_decay_in_interval(my_exp.prop['baseline'], 	
-										my_exp.prop['length'], 
-										my_hnl.ctau0, 
-										gamma)*\
-		fN(pN)*(my_hnl.brs['nu_e_e']*0.10+my_hnl.brs['nu_e_mu']*0.15+my_hnl.brs['nu_mu_mu']*0.15+my_hnl.brs['mu_pi']*0.3)\
-		*2 # for majorana
+	# iterate over the type of neutrino flux available 
+	tot_events = 0
+	for this_flavor in my_exp.prop['flavors']:
+		fK = my_exp.get_flux_func(parent=lp.K_plus, nuflavor = this_flavor)
+		fN = lambda pN: dphi_dEN_app(fK, pN, Ualpha4SQR=USQR, mN=M4, parent=lp.K_plus, daughter=lp.mu_plus)
 
-	return events*norm*dx
+		x = np.linspace(1e-2,10.0,1000)
+		dx = (x[1]-x[0])
+		
+		# integrate N spectrum
+		events = 0
+		norm = my_exp.prop['pots']*my_exp.prop['area']*my_exp.prop['eff'](M4)
+		for pN in x:
+			#boost
+			gamma = np.sqrt(pN**2+my_hnl.m4**2)/my_hnl.m4
+			# dN/dpN
+			events += prob_decay_in_interval(my_exp.prop['baseline'], 	
+											my_exp.prop['length'], 
+											my_hnl.ctau0, 
+											gamma)*\
+			fN(pN)*(my_hnl.brs['nu_e_e']*0.10+my_hnl.brs['nu_e_mu']*0.15+my_hnl.brs['nu_mu_mu']*0.15+my_hnl.brs['mu_pi']*0.3)\
+			*2 # for majorana
 
+		tot_events += events*norm*dx
 
+	return tot_events
