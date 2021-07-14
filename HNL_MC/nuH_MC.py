@@ -19,10 +19,10 @@ from . import nuH_integrands as integrands
 
 # Integration parameters
 NINT = 20
-NEVAL = 1e5
+NEVAL = 1e4
 
 NINT_warmup = 20
-NEVAL_warmup = 1e4
+NEVAL_warmup = 1e3
 
 def Power(x,n):
 	return x**n
@@ -106,7 +106,7 @@ class MC_events:
 		
 		P1LAB_decay, P2LAB_decay, P3LAB_decay, P4LAB_decay = integrands.N_to_nu_ell_ell_phase_space(samples=SAMPLES, MC_case=self)
 
-		return P1LAB_decay, P2LAB_decay, P3LAB_decay, P4LAB_decay, weights*const.gweakeV2_to_cm2, mean*const.gweakeV2_to_cm2
+		return P1LAB_decay, P2LAB_decay, P3LAB_decay, P4LAB_decay, weights, mean
 
 
 
