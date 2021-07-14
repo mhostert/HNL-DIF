@@ -5,7 +5,7 @@ from matplotlib.legend_handler import HandlerLine2D
 import matplotlib.tri as tri
 
 fsize=11
-rc('text', usetex=True)
+rc('text', usetex=False)
 params={'axes.labelsize':fsize,'xtick.labelsize':fsize,'ytick.labelsize':fsize,\
 				'figure.figsize':(1.2*3.7,1.4*2.3617)	}
 rc('font',**{'family':'serif', 'serif': ['computer modern roman']})
