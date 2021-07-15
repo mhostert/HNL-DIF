@@ -26,7 +26,7 @@ def lam(a,b,c):
 	return a**2 + b**2 + c**2 -2*a*b - 2*b*c - 2*a*c
 
 def I1_2body(x,y):
-	return ((1+x-y)*(1+x) - 4*x)*np.sqrt(lam(1.0,x,y))
+	return (1 - y - x * (2 + y - x) )*kallen_sqrt(1.0,x,y)
 
 # From Coloma et al.
 def L(x):
@@ -127,7 +127,8 @@ def nui_nuj_ell1_ell2(params, initial_neutrino, final_neutrino, lepton_minus, le
             rate *= 2
 
     ## CC only (neglecting the lightest lepton mass)
-    else: 
+    elif (same_doublet(final_neutrino,lepton_minus)): 
+        
         if lepton_minus.mass > lepton_plus.mass:
             heavy_lepton = lepton_minus
         else:
@@ -135,17 +136,30 @@ def nui_nuj_ell1_ell2(params, initial_neutrino, final_neutrino, lepton_minus, le
 
         xb = heavy_lepton.mass/1e3/M
 
-        CC_MIXING = np.sqrt(in_tau_doublet(lepton_minus)*params.Utau4**2
+        CC_MINUS = np.sqrt(in_tau_doublet(lepton_minus)*params.Utau4**2
                             + in_mu_doublet(lepton_minus)*params.Umu4**2
                             + in_e_doublet(lepton_minus)*params.Ue4**2)
-        if params.HNLtype=='majorana':
-        
-            CC_plus = np.sqrt(in_tau_doublet(lepton_plus)*params.Utau4**2
-                                + in_mu_doublet(lepton_plus)*params.Umu4**2
-                                + in_e_doublet(lepton_plus)*params.Ue4**2)
-            CC_MIXING += CC_plus
 
-        rate = CC_MIXING**2*Gf**2*M**5/192/np.pi**3*(1 - 8*xb**2 + 8*xb**6 - xb**8 - 12*xb**4*np.log(xb**2))
+        rate = CC_MINUS**2*Gf**2*M**5/192/np.pi**3*(1 - 8*xb**2 + 8*xb**6 - xb**8 - 12*xb**4*np.log(xb**2))
+    
+    ## CC only (neglecting the lightest lepton mass)
+    elif (same_doublet(final_neutrino,lepton_plus) and params.HNLtype=='majorana'): 
+
+        if lepton_minus.mass > lepton_plus.mass:
+            heavy_lepton = lepton_minus
+        else:
+            heavy_lepton = lepton_plus
+
+        xb = heavy_lepton.mass/1e3/M
+        
+        CC_plus = np.sqrt(in_tau_doublet(lepton_plus)*params.Utau4**2
+                            + in_mu_doublet(lepton_plus)*params.Umu4**2
+                            + in_e_doublet(lepton_plus)*params.Ue4**2)
+
+        rate = CC_plus**2*Gf**2*M**5/192/np.pi**3*(1 - 8*xb**2 + 8*xb**6 - xb**8 - 12*xb**4*np.log(xb**2))
+    
+    else:
+    	rate = 0.0
 
     return rate
 

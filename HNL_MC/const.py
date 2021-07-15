@@ -151,6 +151,12 @@ def get_decay_rate_in_s(G):
 def get_decay_rate_in_cm(G):
 	return 1.0/G*invGeV_to_cm
 
+# phase space function
+def kallen(a,b,c):
+	return (a-b-c)**2 - 4*b*c
+def kallen_sqrt(a,b,c):
+	return np.sqrt(kallen(a,b,c))
+
 ################################################
 # auxiliary functions -- scikit-hep particles
 def in_same_doublet(p1,p2):

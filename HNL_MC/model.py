@@ -182,15 +182,15 @@ class hnl_model():
 		# CC-only channels	
 		# pseudoscalar -- factor of 2 for delta L=2 channel 
 		if mh > lp.e_minus.mass/1e3+lp.pi_plus.mass/1e3:
-			rates['e_pi'] = 2*nui_l_P(self, neutrino4, lp.e_minus, lp.pi_plus)
+			rates['e_pi'] = nui_l_P(self, neutrino4, lp.e_minus, lp.pi_plus)
 		if mh > lp.e_minus.mass/1e3+lp.K_plus.mass/1e3:
-			rates['e_K'] = 2*nui_l_P(self, neutrino4, lp.e_minus, lp.K_plus)
+			rates['e_K'] = nui_l_P(self, neutrino4, lp.e_minus, lp.K_plus)
 		
 		# pseudoscalar -- already contain the Delta L = 2 channel
 		if mh > lp.mu_minus.mass/1e3+lp.pi_plus.mass/1e3:
-			rates['mu_pi'] = 2*nui_l_P(self, neutrino4, lp.mu_minus, lp.pi_plus)
+			rates['mu_pi'] = nui_l_P(self, neutrino4, lp.mu_minus, lp.pi_plus)
 		if mh > lp.mu_minus.mass/1e3+lp.K_plus.mass/1e3:
-			rates['mu_K'] = 2*nui_l_P(self, neutrino4, lp.mu_minus, lp.K_plus)
+			rates['mu_K'] = nui_l_P(self, neutrino4, lp.mu_minus, lp.K_plus)
 	
 		self.rates = rates			
 

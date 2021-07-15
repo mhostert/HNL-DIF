@@ -1,14 +1,10 @@
 import numpy as np
+import numpy.ma as ma
 from particle import Particle
 from particle import literals as lp
 from . import exp
 from . import model
-
-# phase space function
-def kallen(a,b,c):
-	return (a-b-c)**2 - 4*b*c
-def kallen_sqrt(a,b,c):
-	return np.sqrt(kallen(a,b,c))
+from .const import *
 
 # ratio between the matrix elements of M -> N ell / M -> nu ell
 def Fm(a,b):
@@ -21,17 +17,16 @@ def rho(a,b):
 # Approximate neutrino->HNL correction rescaling
 # r_i = m_i/M_meson
 def Rapp(ralpha,rN):
-	# avoiding eval of bad exp
-	if (np.sqrt(ralpha)+np.sqrt(rN) < 1):
-		return rho(ralpha,rN)/ralpha/(1.0-ralpha)**2
-	else:
-		return 0.0
-vec_Rapp = np.vectorize(Rapp)
+	R = ma.masked_array(data=rho(ralpha,rN)/ralpha/(1.0-ralpha)**2,
+						mask = ~(np.sqrt(ralpha)+np.sqrt(rN) < 1.0),
+						fill_value=0.0)		
+
+	return R.filled()
 
 def get_Rapp(mN, parent=lp.K_plus, daughter=lp.mu_plus):
 	ralpha = (daughter.mass/parent.mass)**2
 	rN = (mN/parent.mass*1e3)**2
-	return vec_Rapp(ralpha,rN)
+	return Rapp(ralpha,rN)
 
 # Approximation for HNL flux from neutrino flux
 def dphi_dEN_app(dphi_dEnu, EN, Ualpha4SQR, mN, parent=lp.K_plus, daughter=lp.mu_plus):
@@ -40,7 +35,8 @@ def dphi_dEN_app(dphi_dEnu, EN, Ualpha4SQR, mN, parent=lp.K_plus, daughter=lp.mu
 # probability of decay
 def prob_decay_in_interval(L, d, ctau0, gamma):
 	beta = np.sqrt(1.0-1.0/(gamma)**2)
-	return np.exp( -L/ctau0/gamma/beta ) * ( 1 - np.exp( -d/ctau0/gamma/beta ) )
+	# return np.exp( -L/ctau0/gamma/beta ) * ( 1 - np.exp( -d/ctau0/gamma/beta ) )
+	return d/ctau0/gamma/beta
 
 # to be pooled
 def get_lifetime(args, flavor_struct=[1.0,1.0,1.0]):
