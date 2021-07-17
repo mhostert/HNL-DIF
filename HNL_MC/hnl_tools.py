@@ -15,7 +15,7 @@ def rho(a,b):
 	return kallen_sqrt(1,a,b)*Fm(a,b)
 
 # Approximate neutrino->HNL correction rescaling
-# r_i = m_i/M_meson
+# r_i = m_i^2/M_meson^2
 def Rapp(ralpha,rN):
 	R = ma.masked_array(data=rho(ralpha,rN)/ralpha/(1.0-ralpha)**2,
 						mask = ~(np.sqrt(ralpha)+np.sqrt(rN) < 1.0),

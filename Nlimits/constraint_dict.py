@@ -139,59 +139,59 @@ muon_bounds['deGouvea_LNU'] = {
          'CL' : 99,
         }
 
-muon_bounds['kusenko_all'] = {  # WHAT FIG???
-         'file' : PATH+"/Kusenko/Umu4.dat",
-         'units' : 'MeV',
-         'year' : '',
-         'ref' : '',
-         'invisible' : False,
-         'CL' : 90,
-        }
+# muon_bounds['kusenko_all'] = {  # WHAT FIG???
+#          'file' : PATH+"/Kusenko/Umu4.dat",
+#          'units' : 'MeV',
+#          'year' : '',
+#          'ref' : '',
+#          'invisible' : False,
+#          'CL' : 90,
+#         }
 
-muon_bounds['kusenko_all_v2'] = {  # WHAT FIG???
-         'file' : PATH+"/Kusenko/Umu4_v2.dat",
-         'units' : 'MeV',
-         'year' : '',
-         'ref' : '',
-         'invisible' : False,
-         'CL' : 90,
-        }
+# muon_bounds['kusenko_all_v2'] = {  # WHAT FIG???
+#          'file' : PATH+"/Kusenko/Umu4_v2.dat",
+#          'units' : 'MeV',
+#          'year' : '',
+#          'ref' : '',
+#          'invisible' : False,
+#          'CL' : 90,
+#         }
 
-muon_bounds['kusenko_all2'] = {  # WHAT FIG???
-         'file' : PATH+"/Kusenko/Umu4_2.dat",
-         'units' : 'MeV',
-         'year' : '',
-         'ref' : '',
-         'invisible' : False,
-         'CL' : 90,
-        }
+# muon_bounds['kusenko_all2'] = {  # WHAT FIG???
+#          'file' : PATH+"/Kusenko/Umu4_2.dat",
+#          'units' : 'MeV',
+#          'year' : '',
+#          'ref' : '',
+#          'invisible' : False,
+#          'CL' : 90,
+#         }
 
-muon_bounds['kusenko_all3'] = {  # WHAT FIG???
-         'file' : PATH+"/Kusenko/Umu4_3.dat",
-         'units' : 'MeV',
-         'year' : '',
-         'ref' : '',
-         'invisible' : False,
-         'CL' : 90,
-        }
+# muon_bounds['kusenko_all3'] = {  # WHAT FIG???
+#          'file' : PATH+"/Kusenko/Umu4_3.dat",
+#          'units' : 'MeV',
+#          'year' : '',
+#          'ref' : '',
+#          'invisible' : False,
+#          'CL' : 90,
+#         }
 
-muon_bounds['kusenko_all4'] = {  # WHAT FIG???
-         'file' : PATH+"/Kusenko/Umu4_4.dat",
-         'units' : 'MeV',
-         'year' : '',
-         'ref' : '',
-         'invisible' : False,
-         'CL' : 90,
-        }
+# muon_bounds['kusenko_all4'] = {  # WHAT FIG???
+#          'file' : PATH+"/Kusenko/Umu4_4.dat",
+#          'units' : 'MeV',
+#          'year' : '',
+#          'ref' : '',
+#          'invisible' : False,
+#          'CL' : 90,
+#         }
 
-muon_bounds['kusenko_all5'] = {  # WHAT FIG???
-         'file' : PATH+"/Kusenko/Umu4_5.dat",
-         'units' : 'MeV',
-         'year' : '',
-         'ref' : '',
-         'invisible' : False,
-         'CL' : 90,
-        }
+# muon_bounds['kusenko_all5'] = {  # WHAT FIG???
+#          'file' : PATH+"/Kusenko/Umu4_5.dat",
+#          'units' : 'MeV',
+#          'year' : '',
+#          'ref' : '',
+#          'invisible' : False,
+#          'CL' : 90,
+#         }
 
 muon_bounds['SuperK_19'] = {
          'file' : PATH+"/umu4/SuperK_2019.dat",

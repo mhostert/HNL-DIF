@@ -19,7 +19,7 @@ from . import nuH_integrands as integrands
 
 # Integration parameters
 NINT = 20
-NEVAL = 1e4
+NEVAL = 1e3
 
 NINT_warmup = 20
 NEVAL_warmup = 1e3
@@ -31,12 +31,15 @@ def lam(a,b,c):
 
 
 class MC_events:
-	def __init__(self, HNLtype= "MAJORANA", EN=1.0, ENmin = 0.0, ENmax=10.0, mh=0.150, mf=0.0, mp=const.m_e, mm=const.m_e, helicity=-1, BSMparams=None):
+	def __init__(self, HNLtype= "MAJORANA", EN=1.0, ENmin = 0.0, ENmax=10.0, mh=0.150, mf=0.0, mp=const.m_e, mm=const.m_e, helicity=-1, BSMparams=None, convolve_flux=True):
 		
 		self.params = BSMparams
 		
 		# set target properties
-		self.ENmin = ENmin
+		if ENmin <= mh:
+			self.ENmin = mh
+		else:
+			self.ENmin = ENmin
 		self.ENmax = ENmax
 		self.EN = EN
 		self.mh = mh
@@ -45,16 +48,21 @@ class MC_events:
 		self.mm = mm		
 		self.helicity = helicity
 		self.HNLtype = HNLtype
-
+		self.convolve_flux = convolve_flux
 
 	def get_MC_events(self):
 
 		# Model params
 		params = self.params
 
+		if self.convolve_flux:
+			DIM =5
+		else:
+
+			DIM =4
+		
 		#########################################################################
-		# BATCH SAMPLE INTEGRAN OF INTEREST
-		DIM =4
+		# BATCH SAMPLE INTEGRAN OF INTEREST		
 		batch_f = integrands.N_to_nu_ell_ell(dim=DIM, MC_case=self)
 		integ = vg.Integrator(DIM*[[0.0, 1.0]])
 
@@ -65,11 +73,10 @@ class MC_events:
 
 		# Sample again, now saving result
 		result = integ(batch_f,  nitn = NINT, neval = NEVAL, minimize_mem = False)
-		
-		# final integral
+
+		# final integral of ( dGamma/du/dt/dc3/dphi34 * flux(EN) )
 		####################################################################
-		# NEEDS ATTENTION!! --> NEED FULL TOTAL RATE! assumes only N -> nu e e is available
-		mean = result.mean
+		integral = result.mean
 		##########################################################################
 
 
@@ -100,13 +107,11 @@ class MC_events:
 
 		final_integral = gv.gvar(integral, variance ** 0.5)
 		
-		## Check that I get the same VEGAS integral!
 		# print final_integral
 		# print "integral = %s, Q = %.2f"%(result, result.Q)
-		
 		P1LAB_decay, P2LAB_decay, P3LAB_decay, P4LAB_decay = integrands.N_to_nu_ell_ell_phase_space(samples=SAMPLES, MC_case=self)
 
-		return P1LAB_decay, P2LAB_decay, P3LAB_decay, P4LAB_decay, weights, mean
+		return P1LAB_decay, P2LAB_decay, P3LAB_decay, P4LAB_decay, weights
 
 
 

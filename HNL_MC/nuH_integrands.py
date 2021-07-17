@@ -27,7 +27,7 @@ def lam(a,b,c):
 	return a**2 + b**2 + c**2 -2*a*b - 2*b*c - 2*a*c
 
 def HNL_flux(E):
-	EN,flux = np.genfromtxt('digitized/T2Kmainpaper/m4_150_MeV_KmuN.dat',unpack=True)
+	EN,flux = np.genfromtxt('digitized/T2K_HNL_fluxes/m4_150_MeV_KmuN.dat',unpack=True)
 	return np.interp(E,EN,flux,left=0,right=0)
 
 
@@ -44,19 +44,12 @@ class N_to_nu_ell_ell(vg.BatchIntegrand):
 
 		Mzprime = params.Mzprime
 		#######################
-		## nu5 decay
+		## N decay
 
 		mh = MC_case.mh
 		mf = MC_case.mf
 		mm = MC_case.mm
 		mp = MC_case.mp
-
-		# uplus = (mh-mm)*(mh-mm)
-		# uminus = (mf+mp)*(mf+mp)	
-		# u = (uplus - uminus)*x[:, 1] + uminus	
-		# tminus = ((mh*mh - mm*mm)*(-(mf*mf) + mp*mp) + (mf*mf + mh*mh + mm*mm + mp*mp)*u - u*u - mh*mh*np.sqrt(1 + (mf*mf*mf*mf)/(u*u) - (2*(mf*mf)*(mp*mp))/(u*u) + (mp*mp*mp*mp)/(u*u) - (2*(mf*mf))/u - (2*(mp*mp))/u)*u*np.sqrt(1 - (2*(mm*mm))/(mh*mh) + (mm*mm*mm*mm)/(mh*mh*mh*mh) - (2*u)/(mh*mh) - (2*(mm*mm)*u)/(mh*mh*mh*mh) + (u*u)/(mh*mh*mh*mh)))/(2.*u)
-		# tplus = ((mh*mh - mm*mm)*(-(mf*mf) + mp*mp) + (mf*mf + mh*mh + mm*mm + mp*mp)*u - u*u + mh*mh*np.sqrt(1 + (mf*mf*mf*mf)/(u*u) - (2*(mf*mf)*(mp*mp))/(u*u) + (mp*mp*mp*mp)/(u*u) - (2*(mf*mf))/u - (2*(mp*mp))/u)*u*np.sqrt(1 - (2*(mm*mm))/(mh*mh) + (mm*mm*mm*mm)/(mh*mh*mh*mh) - (2*u)/(mh*mh) - (2*(mm*mm)*u)/(mh*mh*mh*mh) + (u*u)/(mh*mh*mh*mh)))/(2.*u)
-		# t = (tplus - tminus)*x[:, 0] + tminus
 
 		uplus = (mh-mm)*(mh-mm)
 		uminus = (mf+mp)*(mf+mp)			
@@ -85,18 +78,6 @@ class N_to_nu_ell_ell(vg.BatchIntegrand):
 		pi = np.pi
 		h = MC_case.helicity
 
-		# c3 = (2.0)*x[:,2]-1.0				
-		# phi34 = (2.0*np.pi)*x[:,3]
-		# cphi34 = np.cos(phi34)
-		# E3CM_decay = (mh*mh+mm*mm-u)/2.0/mh
-		# p3CM_decay = np.sqrt(E3CM_decay*E3CM_decay - mm*mm)
-		# E4CM_decay = (-(mf*mf+mm*mm-u-t))/2.0/mh
-		# p4CM_decay = np.sqrt(E4CM_decay*E4CM_decay - mp*mp)
-		# c34 = (mm*mm+mp*mp-t+2*E3CM_decay*E4CM_decay)/(2.0*p3CM_decay*p4CM_decay)
-		# k3CM = np.sqrt(lam(u,mh*mh, mm*mm))/2.0/mh
-		# k4CM = np.sqrt(lam(mh*mh+mf*mf+mm*mm+mp*mp-u-t,mh*mh, mp*mp))/2.0/mh
-		# c4 = c3*c34 - np.sqrt(1.0 - c3*c3)*np.sqrt(1.0 - c34*c34)*cphi34
-
 		c3 = (2.0)*x[:,2]-1.0				
 		phi34 = (2.0*np.pi)*x[:,3]
 		cphi34 = np.cos(phi34)
@@ -120,117 +101,28 @@ class N_to_nu_ell_ell(vg.BatchIntegrand):
 
 		dgamma /= 2*np.pi*2.0
 
-		# EN = x[:,4]*(MC_case.ENmax - MC_case.ENmin)-MC_case.ENmin
-
 		## JACOBIAN FOR DECAY 
 		dgamma *= (tplus - tminus)
 		dgamma *= (uplus - uminus)
 
+		if MC_case.convolve_flux:
+			EN = x[:,-1]*(MC_case.ENmax - MC_case.ENmin)+MC_case.ENmin
+			dgamma *= HNL_flux(EN)
+
 		return dgamma
-		# return dgamma*HNL_flux(EN)
 
+def N_to_nu_ell_ell_phase_space(samples=None, MC_case=None, boost=True):
 
-def N_to_nu_ell_ell_phase_space(samples=None, MC_case=None):
-
-	
-	# tp = np.array(samples[0])
 	tp = np.array(samples[0])
 	up = np.array(samples[1])
 	c3p = np.array(samples[2])
 	phi34p = np.array(samples[3])
-	# Ep = np.array(samples[4])
-
-	####################
-	# nuH in LAB FRAME
-	EN_LAB = MC_case.EN*np.ones(np.size(up))#[ Ep[i]*(MC_case.ENmax - MC_case.ENmin)-MC_case.ENmin  for i in range(0,np.size(tp)) ]
-	costN_LAB = np.ones(np.size(up))*1.0
-	phiN_LAB = np.ones(np.size(up))*0.0
 
 	######################################
 	mh = MC_case.mh 
 	mf = MC_case.mf 
 	mm = MC_case.mm 
 	mp = MC_case.mp 
-
-	# uplus = (mh-mm)*(mh-mm)
-	# uminus = (mf+mp)*(mf+mp)			
-	# u = (uplus - uminus)*up + uminus
-
-	# tminus = ((mh*mh - mm*mm)*(-(mf*mf) + mp*mp) + (mf*mf + mh*mh + mm*mm + mp*mp)*u - u*u - mh*mh*np.sqrt(1 + (mf*mf*mf*mf)/(u*u) - (2*(mf*mf)*(mp*mp))/(u*u) + (mp*mp*mp*mp)/(u*u) - (2*(mf*mf))/u - (2*(mp*mp))/u)*u*np.sqrt(1 - (2*(mm*mm))/(mh*mh) + (mm*mm*mm*mm)/(mh*mh*mh*mh) - (2*u)/(mh*mh) - (2*(mm*mm)*u)/(mh*mh*mh*mh) + (u*u)/(mh*mh*mh*mh)))/(2.*u)
-	# tplus = ((mh*mh - mm*mm)*(-(mf*mf) + mp*mp) + (mf*mf + mh*mh + mm*mm + mp*mp)*u - u*u + mh*mh*np.sqrt(1 + (mf*mf*mf*mf)/(u*u) - (2*(mf*mf)*(mp*mp))/(u*u) + (mp*mp*mp*mp)/(u*u) - (2*(mf*mf))/u - (2*(mp*mp))/u)*u*np.sqrt(1 - (2*(mm*mm))/(mh*mh) + (mm*mm*mm*mm)/(mh*mh*mh*mh) - (2*u)/(mh*mh) - (2*(mm*mm)*u)/(mh*mh*mh*mh) + (u*u)/(mh*mh*mh*mh)))/(2.*u)
-	# t = (tplus - tminus)*tp + tminus
-
-	# v = mh*mh+mf*mf+mm*mm+mp*mp-u-t
-
-	# E3CM_decay = (mh*mh+mm*mm-u)/2.0/mh
-	# p3CM_decay = np.sqrt(E3CM_decay*E3CM_decay - mm*mm)
-	# E4CM_decay = (mh*mh+mp*mp-v)/2.0/mh
-	# p4CM_decay = np.sqrt(E4CM_decay*E4CM_decay - mp*mp)
-	# E2CM_decay = (mh*mh+mf*mf-t)/2.0/mh
-	# p2CM_decay = E2CM_decay
-
-	# # Angles of P_minus (P_3)
-	# # c_theta3 = [ random.random()*(2)-1.0  for i in range(0,np.size(t)) ]
-	# c_theta3 = [ c3p[i]*(2)-1.0  for i in range(0,np.size(t)) ]
-	# phi3 = [ random.random()*2.0*np.pi for i in range(0,np.size(t)) ]
-
-	# # Azimuthal angle of P_plus wrt to P_minus (phi_34)
-	# # phi34 = [ random.random()*2.0*np.pi for i in range(0,np.size(t)) ]
-	# phi34 = [ phi34p[i]*2.0*np.pi for i in range(0,np.size(t)) ]
-	# # polar angle is known function of u and v
-	# c_theta34 = (mm*mm+mp*mp-t+2*E3CM_decay*E4CM_decay)/(2.0*p3CM_decay*p4CM_decay)
-
-	# # p1
-	# P1CM_decay = [ [mh, 0.0, 0.0, 0.0] for i in range(0,np.size(c_theta3)) ]
-
-	# # p3
-	# P3CM_decay = np.array([ [E3CM_decay[i], 
-	# 					 p3CM_decay[i]*np.sqrt(1.0-c_theta3[i]*c_theta3[i])*np.cos(phi3[i]),
-	# 					 p3CM_decay[i]*np.sqrt(1.0-c_theta3[i]*c_theta3[i])*np.sin(phi3[i]),
-	# 					 p3CM_decay[i]*c_theta3[i]] for i in range(0,np.size(c_theta3)) ])
-
-	# # p4 in the rest frame with z axis along p3
-	# P4F_decay = np.array([ [E4CM_decay[i], 
-	# 					 p4CM_decay[i]*np.sqrt(1.0 - c_theta34[i]*c_theta34[i])*np.cos(phi34[i]),
-	# 					 p4CM_decay[i]*np.sqrt(1.0 - c_theta34[i]*c_theta34[i])*np.sin(phi34[i]),
-	# 					 p4CM_decay[i]*c_theta34[i]] for i in range(0,np.size(c_theta3)) ])
-
-	# # Rotation from CM to F 
-	# P4CM_decay = np.array([ fourvec.R( fourvec.R(P4F_decay[i], -np.arccos(c_theta3[i]), fourvec.Y), phi3[i], fourvec.Z) for i in range(np.size(c_theta3))])
-	
-	# # p2 in CM by momentum conservation							
-	# P2CM_decay = P1CM_decay - P4CM_decay - P3CM_decay 
-	
-	
-	
-	# ### Transform from CM into the LAB frame
-	# # Decaying neutrino
-	# P1LAB_decay = [ fourvec.Tinv(
-	# 								P1CM_decay[i],
-	# 								-np.sqrt( EN_LAB[i]**2 - mh**2 )/EN_LAB[i], 
-	# 								np.arccos(costN_LAB[i]),  
-	# 								phiN_LAB[i])  for i in range( np.shape(t)[0] )]
-
-	# # Outgoing neutrino
-	# P2LAB_decay = [ fourvec.Tinv(
-	# 								P2CM_decay[i],
-	# 								-np.sqrt( EN_LAB[i]**2 - mh**2 )/EN_LAB[i], 
-	# 								np.arccos(costN_LAB[i]),  
-	# 								phiN_LAB[i])  for i in range( np.shape(t)[0] )]
-
-	# # Outgoing lepton minus (3)
-	# P3LAB_decay = [ fourvec.Tinv(
-	# 								P3CM_decay[i],
-	# 								-np.sqrt( EN_LAB[i]**2 - mh**2 )/EN_LAB[i], 
-	# 								np.arccos(costN_LAB[i]),  
-	# 								phiN_LAB[i])  for i in range( np.shape(t)[0] )]
-
-	# # Outgoing lepton plus (4)
-	# P4LAB_decay = [ fourvec.Tinv(
-	# 								P4CM_decay[i],
-	# 								-np.sqrt( EN_LAB[i]**2 - mh**2 ) / EN_LAB[i], 
-	# 								np.arccos(costN_LAB[i]),  
-	# 								phiN_LAB[i])  for i in range( np.shape(t)[0] )]
 
 	##########################################################################
 	sample_size = np.shape(up)[0]
@@ -268,28 +160,36 @@ def N_to_nu_ell_ell_phase_space(samples=None, MC_case=None):
 	# p2
 	P2CM_decay = P1CM_decay - P4CM_decay - P3CM_decay 
 
+	if MC_case.convolve_flux:
+		EN_LAB = np.array(samples[-1])*(MC_case.ENmax - MC_case.ENmin)+MC_case.ENmin
+		costN_LAB = np.ones(np.size(EN_LAB))
+		phiN_LAB = np.zeros(np.size(EN_LAB))
 
-	### Transform from CM into the LAB frame
-	# Decaying neutrino
-	P1LAB_decay = Cfv.Tinv(	P1CM_decay,
-							-np.sqrt(EN_LAB**2 - mh**2)/EN_LAB, 
-							costN_LAB,  
-							phiN_LAB)
-	# Outgoing neutrino
-	P2LAB_decay = Cfv.Tinv(	P2CM_decay,
-							-np.sqrt(EN_LAB**2 - mh**2)/EN_LAB, 
-							costN_LAB,  
-							phiN_LAB)
-	# Outgoing lepton minus (3)
-	P3LAB_decay = Cfv.Tinv(	P3CM_decay,
-							-np.sqrt(EN_LAB**2 - mh**2)/EN_LAB, 
-							costN_LAB,  
-							phiN_LAB)
-	# Outgoing lepton plus (4)
-	P4LAB_decay = Cfv.Tinv(	P4CM_decay,
-							-np.sqrt(EN_LAB**2 - mh**2 )/ EN_LAB, 
-							costN_LAB,  
-							phiN_LAB)	
+		### Transform from CM into the LAB frame
+		# Decaying neutrino
+		P1LAB_decay = Cfv.Tinv(	P1CM_decay,
+								-np.sqrt(EN_LAB**2 - mh**2)/EN_LAB, 
+								costN_LAB,  
+								phiN_LAB)
+		# Outgoing neutrino
+		P2LAB_decay = Cfv.Tinv(	P2CM_decay,
+								-np.sqrt(EN_LAB**2 - mh**2)/EN_LAB, 
+								costN_LAB,  
+								phiN_LAB)
+		# Outgoing lepton minus (3)
+		P3LAB_decay = Cfv.Tinv(	P3CM_decay,
+								-np.sqrt(EN_LAB**2 - mh**2)/EN_LAB, 
+								costN_LAB,  
+								phiN_LAB)
+		# Outgoing lepton plus (4)
+		P4LAB_decay = Cfv.Tinv(	P4CM_decay,
+								-np.sqrt(EN_LAB**2 - mh**2 )/ EN_LAB, 
+								costN_LAB,  
+								phiN_LAB)	
 
-	#  Pkaon, Phnl, pmuon, pnuprime, pzprime, pe+, pe-
-	return P1LAB_decay, P2LAB_decay, P3LAB_decay, P4LAB_decay
+		#  Phnl, pnu, pe+, pe-
+		return P1LAB_decay, P2LAB_decay, P3LAB_decay, P4LAB_decay
+	else:
+		#  Phnl, pnu, pe+, pe-
+		return P1CM_decay, P2CM_decay, P3CM_decay, P4CM_decay
+
