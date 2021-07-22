@@ -8,6 +8,10 @@ from . import const
 # experiment 
 ND280_FHC    = "nd280_FHC"
 ND280_RHC = "nd280_RHC"
+muBOONE_absorber = "muBOONE_absorber"
+PS191 = "PS191"
+NOMAD = "NOMAD"
+CHARM = "CHARM"
 
 ######################################################
 # ALL FLUXES ARE NORMALIZED SO THAT THE UNITS ARE    
@@ -31,10 +35,10 @@ class experiment():
 				"area" : 1.7e2*1.96e2, # cm^2
 				"length" : 56*3, # cm
 				"baseline" : 280e2, # cm
-				"eff" : lambda x: 0.05,
+				"effs" : lambda x: 0.05,
 				"emin" : 0.05,
 				"emax" : 10.0,
-				"pots" : 12.34e20,
+				"pots" : 12.34e20+6.29e20, ## approximately the same flux.
 				"flavors" : [lp.nu_mu,lp.nu_mu_bar],
 			}
 
@@ -46,17 +50,41 @@ class experiment():
 				"area" : 1.7e2*1.96e2, # cm^2
 				"length" : 56*3, # cm
 				"baseline" : 280e2, # cm
-				"eff" : lambda x: 0.05,
+				"effs" : lambda x: 0.05,
 				"emin" : 0.05,
 				"emax" : 10.0,
 				"pots" : 6.29e20,
 				"flavors" : [lp.nu_mu_bar,lp.nu_mu],
 			}
 		
+
+		elif self.EXP_FLAG == muBOONE_absorber:
+			self.prop = {
+				
+				"name" : "nd280/RHC",
+				"area" : 1.7e2*1.96e2, # cm^2
+				"length" : 56*3, # cm
+				"baseline" : 280e2, # cm
+			}
+		
+		elif self.EXP_FLAG == PS191:
+			self.prop = {
+				
+				"name" : "ps191",
+				"flux_norm" : 1.0/1e21/0.05,
+				"area" : 1.7e2*1.96e2, # cm^2
+				"length" : 56*3, # cm
+				"baseline" : 280e2, # cm
+				"effs" : lambda x: 0.05,
+				"emin" : 0.05,
+				"emax" : 10.0,
+				"pots" : 6.29e20,
+				"flavors" : [lp.nu_mu_bar,lp.nu_mu],
+			}
+
 		else:
 			print('ERROR! No experiment chosen.')
-
-
+		
 	def get_flux_func(self, parent=lp.pi_plus, nuflavor=lp.nu_mu):
 		# nus/cm^2/50 MeV/1e21 POT
 

@@ -19,7 +19,7 @@ from . import nuH_integrands as integrands
 
 # Integration parameters
 NINT = 20
-NEVAL = 1e3
+NEVAL = 1e4
 
 NINT_warmup = 20
 NEVAL_warmup = 1e3

@@ -25,7 +25,7 @@ def plot_bound(ax,bound, label='', color='black', lw=0.5, units=1):
     # Constraints on U\alpha4^2
     l1, = ax.plot(MN*units, usqr_bound, label=label, color=color, lw=lw)
     ax.fill_between(MN*units, usqr_bound, np.ones(np.size(MN)), 
-                    fc='lightgrey', ec='None', lw =0.0, alpha=0.5)
+                    fc='lightgrey', ec='None', lw =0.0, alpha=1)
     return l1
 
 def plot_ID_individual(axis,listoffiles):

@@ -101,7 +101,7 @@ def generate_events(MHEAVY, mixings, HNLtype='majorana',lepton_mass=const.m_e, H
 ND280_B_FIELD = 0.2 #Tesla
 # radius in cm, Bfield in Tesla, and p in GeV
 def radius_of_curvature(p, Bfield):
-	return 1e2*p/0.3/Bfield
+	return p/0.3/(Bfield)*1e2
 
 def tilted_circle(R,theta,x):
 	return np.sqrt(R**2 * np.cos(2*theta) + R**2 - 4*x*R*np.sin(theta)-2*x**2)/np.sqrt(2)-R*np.cos(theta)
@@ -110,7 +110,7 @@ def tilted_circle(R,theta,x):
 def distance_between_particles(theta, R1, R2, x):
 	y1 = tilted_circle(R1, theta/2, x)
 	y2 = tilted_circle(R2, theta/2, x)
-	return np.abs(y1+y2)
+	return np.where(x<np.minimum(R1,R2), np.abs(y1+y2), np.inf)
 
 def compute_kin_vars(df):
     for comp in ['t','x','y','z']:
@@ -132,7 +132,7 @@ def compute_kin_vars(df):
     df['ee_momentum', ''] = np.sqrt(dot3_df(df['pee'], df['pee']))
     df['experimental_t', ''] = (df['plm','t'] - df['plm','z'] + df['plp','t'] - df['plp','z'])**2 +\
                                    df['plm','x']**2 + df['plm','y']**2 + df['plp','x']**2 + df['plp','y']**2
-    df['race_to_b=1cm', ''] = 0.5/np.sqrt(1/np.cos(df['ee_theta', '']/2) -1 )    
+    df['race_to_b=1cm', ''] = 0.5/np.sqrt(1/np.cos(df['ee_theta', '']/2) - 1 )    
     df['radius_minus', ''] = radius_of_curvature(df['eminus', ''], ND280_B_FIELD)
     df['radius_plus', ''] = radius_of_curvature(df['eplus', ''], ND280_B_FIELD)
     df['distance_between_circles_at_10cm'] = distance_between_particles(df['ee_theta', ''], df['radius_minus', ''], df['radius_plus', ''],  10)

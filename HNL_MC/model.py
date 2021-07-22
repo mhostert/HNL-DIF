@@ -5,7 +5,7 @@ from .rates import *
 
 class hnl_model():
 
-	def __init__(self, m4, mixings = [0.0,0.0,0.0], minimal=True, HNLtype="dirac"):
+	def __init__(self, m4, mixings = [0.0,0.0,0.0], dipoles = [0.0,0.0,0.0], GX = 0.0, minimal=True, HNLtype="majorana"):
 
 		self.minimal = minimal
 		
@@ -24,6 +24,13 @@ class hnl_model():
 			self.m5			= 1e10
 			self.Mzprime	= 1e10
 			self.HNLtype		= HNLtype
+
+			self.GX         = GX
+
+			self.de4		= dipoles[0]
+			self.dmu4		= dipoles[1]
+			self.dtau4		= dipoles[2]
+			self.cut_ee     = 2*m_e
 
 		else:
 			print("Non-minimal model not supported")
@@ -60,22 +67,22 @@ class hnl_model():
 		self.cmu4 = gweak/2/cw* (self.Umu4) + self.UD4*(-self.UD4*self.Umu4 -self.UD5*self.Umu5)*self.gprime*sw*self.chi
 		self.ctau4 = gweak/2/cw* (self.Utau4) + self.UD4*(-self.UD4*self.Utau4 -self.UD5*self.Utau5)*self.gprime*sw*self.chi
 		
-		self.de4 = self.UD4*(-self.UD4*self.Ue4 - self.UD5*self.Ue4)*self.gprime
-		self.dmu4 = self.UD4*(-self.UD4*self.Umu4 - self.UD5*self.Umu4)*self.gprime
-		self.dtau4 = self.UD4*(-self.UD4*self.Utau4 - self.UD5*self.Utau4)*self.gprime
+		# self.de4 = self.UD4*(-self.UD4*self.Ue4 - self.UD5*self.Ue4)*self.gprime
+		# self.dmu4 = self.UD4*(-self.UD4*self.Umu4 - self.UD5*self.Umu4)*self.gprime
+		# self.dtau4 = self.UD4*(-self.UD4*self.Utau4 - self.UD5*self.Utau4)*self.gprime
 
 		self.clight4 = np.sqrt(self.ce4**2+self.cmu4**2+self.ctau4**2)
-		self.dlight4 = np.sqrt(self.de4**2+self.dmu4**2+self.dtau4**2)
+		# self.dlight4 = np.sqrt(self.de4**2+self.dmu4**2+self.dtau4**2)
 
 		self.clight5 = np.sqrt(self.ce5**2+self.cmu5**2+self.ctau5**2)
-		self.dlight5 = np.sqrt(self.de5**2+self.dmu5**2+self.dtau5**2)
+		# self.dlight5 = np.sqrt(self.de5**2+self.dmu5**2+self.dtau5**2)
 
 		self.c45 = gweak/2/cw* (np.sqrt(self.Uactive4SQR*self.Uactive5SQR)) + self.UD5*self.UD4*self.gprime*sw*self.chi
 		self.c44 = gweak/2/cw* (np.sqrt(self.Uactive4SQR*self.Uactive4SQR)) + self.UD4*self.UD4*self.gprime*sw*self.chi
 		self.c55 = gweak/2/cw* (np.sqrt(self.Uactive5SQR*self.Uactive5SQR)) + self.UD5*self.UD5*self.gprime*sw*self.chi
-		self.d45 = self.UD5*self.UD4*self.gprime
-		self.d44 = self.UD4*self.UD4*self.gprime
-		self.d55 = self.UD5*self.UD5*self.gprime
+		# self.d45 = self.UD5*self.UD4*self.gprime
+		# self.d44 = self.UD4*self.UD4*self.gprime
+		# self.d55 = self.UD5*self.UD5*self.gprime
 
 		self.clight = gweak/2/cw
 		self.dlight = 0.0
@@ -140,7 +147,6 @@ class hnl_model():
 
 	def compute_rates(self):
 		
-		
 		##################
 		# Neutrino 4
 		mh = self.m4
@@ -153,6 +159,7 @@ class hnl_model():
 			rates['nu_nu_nu'] += nui_nuj_nuk_nuk(self, neutrino4, nu_a)
 
 		# channels with 1 neutrino in final states
+		rates['nu_gamma'] = 0
 		rates['nu_e_e'] = 0
 		rates['nu_mu_mu'] = 0
 		rates['nu_e_mu'] = 0
@@ -163,7 +170,8 @@ class hnl_model():
 		rates['mu_pi'] = 0
 		rates['mu_K'] = 0
 
-		for nu_a in neutrinos:
+		for nu_a in neutrinos:			# nu gamma 
+			rates['nu_gamma'] += nui_nuj_gamma(self, neutrino4, nu_a)
 			# dileptons -- already contains the Delta L = 2 channel
 			if mh > 2*lp.e_minus.mass/1e3:
 				rates['nu_e_e'] += nui_nuj_ell1_ell2(self, neutrino4, nu_a, lp.e_minus, lp.e_plus)

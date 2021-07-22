@@ -35,26 +35,37 @@ def dphi_dEN_app(dphi_dEnu, EN, Ualpha4SQR, mN, parent=lp.K_plus, daughter=lp.mu
 # probability of decay
 def prob_decay_in_interval(L, d, ctau0, gamma):
 	beta = np.sqrt(1.0-1.0/(gamma)**2)
-	# return np.exp( -L/ctau0/gamma/beta ) * ( 1 - np.exp( -d/ctau0/gamma/beta ) )
-	return d/ctau0/gamma/beta
+	return np.exp( -L/ctau0/gamma/beta ) * ( 1 - np.exp( -d/ctau0/gamma/beta ) )
+	# return d/ctau0/gamma/beta
 
 # to be pooled
-def get_lifetime(args, flavor_struct=[1.0,1.0,1.0]):
+def get_lifetime(args, flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0.0,0.0], GX = 0.0):
 
 	M4, USQR = args
 	
-	my_hnl = model.hnl_model(m4=M4, mixings=USQR*np.array(flavor_struct))
+	my_hnl = model.hnl_model(m4=M4, mixings=USQR*np.array(flavor_struct), dipoles=dipoles, GX = GX)
 	my_hnl.set_high_level_variables()
 	my_hnl.compute_rates()
 	
-	return my_hnl.ctau0
+	return my_hnl.ctau0/c_LIGHT
 
 # to be pooled
-def get_event_rate(args, flavor_struct=[1.0,1.0,1.0], exp_setup = exp.ND280_FHC):
+def get_gamma_nuee(args, flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0.0,0.0], GX = 0.0):
 
 	M4, USQR = args
 	
-	my_hnl = model.hnl_model(m4=M4, mixings=USQR*np.array(flavor_struct))
+	my_hnl = model.hnl_model(m4=M4, mixings=USQR*np.array(flavor_struct), dipoles=dipoles, GX = GX)
+	my_hnl.set_high_level_variables()
+	my_hnl.compute_rates()
+	
+	return my_hnl.rates['nu_e_e']
+
+# to be pooled
+def get_event_rate(args, flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0.0,0.0], GX = 0.0, exp_setup = exp.ND280_FHC):
+
+	M4, USQR = args
+	
+	my_hnl = model.hnl_model(m4=M4, mixings=USQR*np.array(flavor_struct), dipoles=dipoles, GX = GX)
 	my_hnl.set_high_level_variables()
 	my_hnl.compute_rates()
 
@@ -71,7 +82,7 @@ def get_event_rate(args, flavor_struct=[1.0,1.0,1.0], exp_setup = exp.ND280_FHC)
 		
 		# integrate N spectrum
 		events = 0
-		norm = my_exp.prop['pots']*my_exp.prop['area']*my_exp.prop['eff'](M4)
+		norm = my_exp.prop['pots']*my_exp.prop['area']
 		for pN in x:
 			#boost
 			gamma = np.sqrt(pN**2+my_hnl.m4**2)/my_hnl.m4
@@ -80,18 +91,17 @@ def get_event_rate(args, flavor_struct=[1.0,1.0,1.0], exp_setup = exp.ND280_FHC)
 											my_exp.prop['length'], 
 											my_hnl.ctau0, 
 											gamma)*\
-			fN(pN)*(my_hnl.brs['nu_e_e']*0.10+my_hnl.brs['nu_e_mu']*0.15+my_hnl.brs['nu_mu_mu']*0.15+my_hnl.brs['mu_pi']*0.3)\
-			*2 # for majorana
+			fN(pN)*(my_hnl.brs['nu_e_e']*0.10+my_hnl.brs['nu_e_mu']*0.15+my_hnl.brs['nu_mu_mu']*0.15+my_hnl.brs['mu_pi']*0.3)
 
-		tot_events += events*norm*dx
+		tot_events += events
 
-	return tot_events
+	return tot_events*norm*dx
 
-def get_event_rate_mode(args, modes, flavor_struct=[1.0,1.0,1.0], exp_setup = exp.ND280_FHC):
+def get_event_rate_mode(args, modes, flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0.0,0.0], GX = 0.0, exp_setup = exp.ND280_FHC):
 
 	M4, USQR = args
 	
-	my_hnl = model.hnl_model(m4=M4, mixings=USQR*np.array(flavor_struct))
+	my_hnl = model.hnl_model(m4=M4, mixings=USQR*np.array(flavor_struct), dipoles=dipoles, GX = GX)
 	my_hnl.set_high_level_variables()
 	my_hnl.compute_rates()
 

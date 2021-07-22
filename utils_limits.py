@@ -20,7 +20,6 @@ weights_modes_majorana = np.array([1, 1, 0.5, 1, 1, 1])
 modes_dirac = np.array([0, 10, 12, 16])
 weights_modes_dirac = np.array([1, 0.25, 0.5, 1])
 
-
 #Bayesian limit with flat prior
 def bayesian_upper_limit(n_events, cl=0.9):
     eta = np.sqrt(n_events)

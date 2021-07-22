@@ -23,25 +23,27 @@ m_mu =  0.1134289257 # GeV
 m_tau =  1.77682 # GeV
 
 # charged hadrons
-Mcharged_pion = 0.1396
-Mcharged_rho = 0.7758
+m_charged_pion = 0.1396
+m_charged_rho = 0.7758
 
 # neutral hadrons
-Mneutral_pion = 0.135
-Mneutral_eta = 0.5478
-Mneutral_rho = 0.7755
+m_neutral_pion = 0.135
+m_neutral_eta = 0.5478
+m_neutral_rho = 0.7755
 
-Mneutral_B = 5.27958
-Mcharged_B = 5.27958
+m_neutral_B = 5.27958
+m_charged_B = 5.27958
 
-Mneutral_kaon = 0.497611
-Mcharged_kaon = 0.4937
-Mcharged_kaonstar = 0.892
+m_neutral_kaon = 0.497611
+m_charged_kaon = 0.4937
+m_charged_kaonstar = 0.892
+
+
 
 ################################################
 # QED
 alphaQED = 1.0/137.03599908421 # Fine structure constant at q2 -> 0
-e = np.sqrt((4*np.pi)/alphaQED)
+eQED = np.sqrt((4*np.pi)/alphaQED)
 
 ################################################
 # weak sector
@@ -50,6 +52,8 @@ gweak = np.sqrt(Gf*m_W**2*8/np.sqrt(2))
 s2w = 0.22343 # On-shell
 sw = np.sqrt(s2w)
 cw = np.sqrt(1. - s2w)
+gL = -1/2 + 0.223
+gR = 0.22343
 
 ################################################
 # higgs -- https://pdg.lbl.gov/2019/reviews/rpp2018-rev-higgs-boson.pdf
@@ -69,23 +73,23 @@ MAG_P = 2.792
 
 ################################################
 # Mesons
-fcharged_pion = 0.1307
-fcharged_kaon = 0.1598
-fcharged_rho = 0.220
+f_charged_pion = 0.1307
+f_charged_kaon = 0.1598
+f_charged_rho = 0.220
 
-fneutral_pion = 0.130
-fneutral_kaon = 0.164
-fneutral_B = 0.1909
-fcharged_B = 0.1871
-fneutral_Bs = 0.2272
-fneutral_eta = 0.210
+f_neutral_pion = 0.130
+f_neutral_kaon = 0.164
+f_neutral_B = 0.1909
+f_charged_B = 0.1871
+f_neutral_Bs = 0.2272
+f_neutral_eta = 0.210
 
-Fneutral_pion = fneutral_pion/np.sqrt(2.0)
-Fneutral_kaon = fneutral_kaon/np.sqrt(2.0)
-Fneutral_B = fneutral_B/np.sqrt(2.0)
-Fcharged_B = fcharged_B/np.sqrt(2.0)
-Fneutral_Bs = fneutral_Bs/np.sqrt(2.0)
-Fneutral_eta = fneutral_eta/np.sqrt(2.0)
+F_neutral_pion = f_neutral_pion/np.sqrt(2.0)
+F_neutral_kaon = f_neutral_kaon/np.sqrt(2.0)
+F_neutral_B = f_neutral_B/np.sqrt(2.0)
+F_charged_B = f_charged_B/np.sqrt(2.0)
+F_neutral_Bs = f_neutral_Bs/np.sqrt(2.0)
+F_neutral_eta = f_neutral_eta/np.sqrt(2.0)
 
 
 ################################################
