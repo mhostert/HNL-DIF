@@ -1,9 +1,13 @@
-from . import hnl_tools
-from . import plot_style
+# definitions
+from . import const
 from . import exp
 from . import model
 from . import rates
-from . import const
-# from . import MC_hnl
+
+# computing fluxes and limits
+from . import hnl_tools
+from . import plot_tools
+
+# Generators
 from . import nuH_gen
 from . import nuH_integrands

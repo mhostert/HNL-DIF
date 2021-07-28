@@ -1,5 +1,7 @@
 import numpy as np
 from scipy import interpolate
+from pathlib import Path
+local_dir = Path(__file__).parent
 
 from particle import Particle
 from particle import literals as lp
@@ -52,8 +54,8 @@ gweak = np.sqrt(Gf*m_W**2*8/np.sqrt(2))
 s2w = 0.22343 # On-shell
 sw = np.sqrt(s2w)
 cw = np.sqrt(1. - s2w)
-gL = -1/2 + 0.223
-gR = 0.22343
+gL = -1/2 + s2w
+gR = s2w
 
 ################################################
 # higgs -- https://pdg.lbl.gov/2019/reviews/rpp2018-rev-higgs-boson.pdf

@@ -35,8 +35,13 @@ def dphi_dEN_app(dphi_dEnu, EN, Ualpha4SQR, mN, parent=lp.K_plus, daughter=lp.mu
 # probability of decay
 def prob_decay_in_interval(L, d, ctau0, gamma):
 	beta = np.sqrt(1.0-1.0/(gamma)**2)
-	return np.exp( -L/ctau0/gamma/beta ) * ( 1 - np.exp( -d/ctau0/gamma/beta ) )
-	# return d/ctau0/gamma/beta
+	# return 
+	ell = ctau0*gamma*beta
+	tol = (d/ell > 1e-5)
+	P = ma.masked_array(data=np.exp(-L/ell) * (1 - np.exp(-d/ell)),
+						mask = ~tol,
+						fill_value=d/ell)		
+	return P.filled()
 
 # to be pooled
 def get_lifetime(args, flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0.0,0.0], GX = 0.0):
@@ -97,6 +102,7 @@ def get_event_rate(args, flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0.0,0.0], GX 
 
 	return tot_events*norm*dx
 
+
 def get_event_rate_mode(args, modes, flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0.0,0.0], GX = 0.0, exp_setup = exp.ND280_FHC):
 
 	M4, USQR = args
@@ -129,7 +135,7 @@ def get_event_rate_mode(args, modes, flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0
 											gamma)*fN(pN)
 
 		tot_events += events
-    
+
 	tot_events *= norm*dx
     
 	events = np.zeros(len(modes))

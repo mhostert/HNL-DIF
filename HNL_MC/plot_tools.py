@@ -8,6 +8,7 @@ from matplotlib.legend_handler import HandlerLine2D
 import matplotlib.tri as tri
 
 from .const import *
+from .hnl_tools import *
 
 fsize=11
 rc('text', usetex=False)
@@ -18,6 +19,8 @@ rcParams.update(params)
 axes_form  = [0.18,0.18,0.78,0.74]
 matplotlib.rcParams['hatch.linewidth'] = 0.3  # previous pdf hatch linewidth
 
+
+
 def std_fig():
     fig = plt.figure()
     ax = fig.add_axes(axes_form)
@@ -27,22 +30,27 @@ def std_fig():
 def interp_grid(x,y,z, fine_gridx=False, fine_gridy=False, logx=False, logy=False):
 
     if not fine_gridx:
-        fine_gridx = len(x)
+        fine_gridx = 100#len(x)
     if not fine_gridy:
-        fine_gridy = len(y)
+        fine_gridy = 100#len(y)
 
 
     if logx:
         xi = np.logspace(np.min(np.log10(x)), np.max(np.log10(x)), fine_gridx)
     else: 
         xi = np.linspace(np.min(x), np.max(x), fine_gridx)
+    
     if logy:
+        y = -np.log(y)
         yi = np.logspace(np.min(np.log10(y)), np.max(np.log10(y)), fine_gridy)
+
     else:
         yi = np.linspace(np.min(y), np.max(y), fine_gridy)
 
+    
     Xi, Yi = np.meshgrid(xi, yi)
-
+    if logy:
+        Yi = np.exp(-Yi)
 
     # Perform linear interpolation of the data (x,y) on a grid defined by (xi,yi)
     
@@ -148,7 +156,7 @@ def get_PS191_limit(x, nevent_for_new_limit):
     m4, Umu4sq = np.genfromtxt(this_file, unpack=True)
     fpi = interpolate.interp1d(m4*units, Umu4sq, kind='linear', bounds_error=False, fill_value=1, assume_sorted=False)    
 
-    NCscaling = np.sqrt(gL**2 + gR**2 + gR*gL)
+    NCscaling = np.sqrt( 1/4*(1-4*s2w+8*s2w**2) )
     combined = np.amin([fK(x),fpi(x)],axis=0)
 
     no_bkg = combined/NCscaling
@@ -156,23 +164,30 @@ def get_PS191_limit(x, nevent_for_new_limit):
     
     return no_bkg, w_bkg
 
-def rescale_muboone(mN,Usqr):
-    units = 1e-3 # GeV units
-    this_file = 'Nlimits/digitized/PS-191/UeUmu_K.dat'
+def rescale_muboone(x, flavor_struct=[0,1,0], dipoles=[0,0,0], GX=0):
+
+    this_file = 'digitized/muboone_kelly_machado/PS_eff_avg.dat'
     m4, Umu4sq = np.genfromtxt(this_file, unpack=True)
-    fK = interpolate.interp1d(m4*units, Umu4sq, kind='linear', bounds_error=False, fill_value=1, assume_sorted=False)    
+    m4 *= 1e-3
+    f = interpolate.interp1d(np.log10(m4), np.log10(Umu4sq), kind='linear', bounds_error=False, fill_value='extrapolate', assume_sorted=False)    
+    L = 100e2
+    d = 2e2
+    y=[]
+    for mN in x:    
+        EN = (m_neutral_kaon**2 + mN**2-m_mu**2)/2/m_neutral_kaon
+        gamma = EN/mN
+        beta = np.sqrt(1.0-1.0/(gamma)**2)
+        usqr=10**f(np.log10(mN))
+        ctau0_new=c_LIGHT*get_lifetime((mN,usqr), flavor_struct=flavor_struct, dipoles=dipoles, GX=GX)
+        ctau0_old=c_LIGHT*get_lifetime((mN,usqr), flavor_struct=flavor_struct, dipoles=[0,0,0], GX=0.0)
 
-    this_file = 'Nlimits/digitized/PS-191/UeUmu_pi.dat'
-    m4, Umu4sq = np.genfromtxt(this_file, unpack=True)
-    fpi = interpolate.interp1d(m4*units, Umu4sq, kind='linear', bounds_error=False, fill_value=1, assume_sorted=False)    
+        prob_old = d/(ctau0_old*usqr*beta*gamma)
+        prob_new = prob_decay_in_interval(L, d, ctau0_new, gamma)
+        ratio_new_old = prob_new/prob_old
 
-    NCscaling = np.sqrt(gL**2 + gR**2 + gR*gL)
-    combined = np.amin([fK(x),fpi(x)],axis=0)
+        y.append(usqr**2/ratio_new_old)
 
-    no_bkg = combined/NCscaling
-    w_bkg = combined/NCscaling*np.sqrt(nevent_for_new_limit/2.3) # needs some attention
-    
-    return no_bkg, w_bkg
+    return np.array(y)
 
 
 

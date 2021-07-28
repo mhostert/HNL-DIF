@@ -3,6 +3,9 @@ from scipy import interpolate
 from particle import Particle
 from particle import literals as lp
 
+from pathlib import Path
+local_dir = Path(__file__).parent
+
 from . import const
 
 # experiment 
@@ -29,8 +32,8 @@ class experiment():
 		if self.EXP_FLAG == ND280_FHC:
 
 			self.prop = {
-				
 				"name" : "nd280/FHC",
+				# nus/cm^2/50 MeV/1e21 POT
 				"flux_norm" : 1.0/1e21/0.05,
 				"area" : 1.7e2*1.96e2, # cm^2
 				"length" : 56*3, # cm
@@ -44,8 +47,8 @@ class experiment():
 
 		elif self.EXP_FLAG == ND280_RHC:
 			self.prop = {
-				
 				"name" : "nd280/RHC",
+				# nus/cm^2/50 MeV/1e21 POT
 				"flux_norm" : 1.0/1e21/0.05,
 				"area" : 1.7e2*1.96e2, # cm^2
 				"length" : 56*3, # cm
@@ -60,7 +63,6 @@ class experiment():
 
 		elif self.EXP_FLAG == muBOONE_absorber:
 			self.prop = {
-				
 				"name" : "nd280/RHC",
 				"area" : 1.7e2*1.96e2, # cm^2
 				"length" : 56*3, # cm
@@ -69,26 +71,24 @@ class experiment():
 		
 		elif self.EXP_FLAG == PS191:
 			self.prop = {
-				
-				"name" : "ps191",
-				"flux_norm" : 1.0/1e21/0.05,
-				"area" : 1.7e2*1.96e2, # cm^2
-				"length" : 56*3, # cm
-				"baseline" : 280e2, # cm
-				"effs" : lambda x: 0.05,
+				"name" : "ps191/",
+				"flux_norm" : 1.0,
+				"area" : 6e2*3e2, # cm^2
+				"length" : 12e2, # cm
+				"baseline" : 123e2, # cm
+				"effs" : lambda x: 1,
 				"emin" : 0.05,
-				"emax" : 10.0,
-				"pots" : 6.29e20,
-				"flavors" : [lp.nu_mu_bar,lp.nu_mu],
+				"emax" : 7.0,
+				"pots" : 0.89e19,
+				"flavors" : [lp.nu_mu],
 			}
 
 		else:
 			print('ERROR! No experiment chosen.')
 		
-	def get_flux_func(self, parent=lp.pi_plus, nuflavor=lp.nu_mu):
-		# nus/cm^2/50 MeV/1e21 POT
+	def get_flux_func(self, parent=lp.K_plus, nuflavor=lp.nu_mu):
 
-		fluxfile = f"./fluxes/{self.prop['name']}/{nuflavor.name}_{parent.name}.dat"
+		fluxfile = f"{local_dir}/fluxes/{self.prop['name']}/{nuflavor.name}_{parent.name}.dat"
 		try:
 			e,f = np.genfromtxt(fluxfile, unpack = True)
 			flux = interpolate.interp1d(e, f*self.prop['flux_norm'], fill_value=0.0, bounds_error=False)
