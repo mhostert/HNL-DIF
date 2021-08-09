@@ -20,22 +20,6 @@ weights_modes_majorana = np.array([1, 1, 0.5, 1, 1, 1])
 modes_dirac = np.array([0, 10, 12, 16])
 weights_modes_dirac = np.array([1, 0.25, 0.5, 1])
 
-# Extrapolation of efficiencies
-def get_T2K_efficiency():
-    eff_fit = np.zeros(shape=(len(masses_all), 24, 10))
-    for mode in modes_majorana:
-        for i in range(10):
-            poly = np.polynomial.polynomial.Polynomial.fit(np.append(0.0,masses_t2k[:stop_index_fit]), 
-                                                           np.append(0.0,eff[:stop_index_fit, mode, i]), 
-                                                           deg=1)
-            if (poly(1)-poly(0)) < 0:
-                poly = np.polynomial.polynomial.Polynomial.fit(np.append(0.0,masses_t2k[:stop_index_fit]), 
-                                                               np.append(0.0,eff[:stop_index_fit, mode, i]), 
-                                                               deg=0)
-
-        eff_fit[:, mode, i] = poly(masses_all)
-    return eff_fit
-
 #Bayesian limit with flat prior
 def bayesian_upper_limit(n_events, cl=0.9):
     eta = np.sqrt(n_events)

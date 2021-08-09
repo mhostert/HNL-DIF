@@ -1,4 +1,6 @@
 import numpy as np
+import numpy.ma as ma
+
 import vegas as vg
 import pandas as pd 
 import os
@@ -16,46 +18,41 @@ from . fourvec import *
 vertices = {'CConly': [1,-1,0], "NConly" : [0,0,1], 'CCandNC': [1,-1,1], 'NCandCC': [1,-1,1]}
 helicities = {'LH': -1, 'RH': +1, 'both': 0}
 
-def generate_events(MHEAVY, mixings, dipoles=[0,0,0], dark_coupl=[0,0,0,0], HNLtype='majorana', lepton_mass=const.m_e, HEL='LH', modify_vertex='NCandCC', convolve_flux=True):
+def generate_events(MHEAVY, mixings, dipoles={}, dark_coupl={}, HNLtype='dirac', lepton_mass=const.m_e, HEL='LH', modify_vertex='NCandCC', convolve_flux=True):
 
 	#########################
-	has_dipole=''
-	has_zprime=''
-	# Set BSM parameters
-	if np.sum(dipoles) > 0:
-		has_dipole='_dip'
-	if np.sum(dark_coupl)>0:
-		has_zprime='_zpr'
+	has_dipole = '_dip' if dipoles else ''
+	has_zprime = '_zpr' if dark_coupl else ''
 
-	my_hnl = model.hnl_model(MHEAVY, mixings = mixings, dark_coupl= dark_coupl, dipoles=dipoles, minimal=True, HNLtype=HNLtype)	
+	my_hnl = model.hnl_model(MHEAVY, mixings = mixings, dark_coupl= dark_coupl, dipoles=dipoles, HNLtype=HNLtype)	
 	my_hnl.set_high_level_variables()
-
 	if HEL == 'both':
-
+		
+		# right-handed
 		my_MC = MC.MC_events(HNLtype = HNLtype, mh=my_hnl.m4, mf=0.0, mp=lepton_mass, mm=lepton_mass, helicity=+1, BSMparams=my_hnl, convolve_flux=convolve_flux)
-		
 		my_MC.CCflag1 = vertices[modify_vertex][0]
 		my_MC.CCflag2 = vertices[modify_vertex][1]
 		my_MC.NCflag = vertices[modify_vertex][2]
-		
 		RH = my_MC.get_MC_events()	
-
-		my_MC = MC.MC_events(HNLtype = HNLtype, mh=my_hnl.m4, mf=0.0, mp=lepton_mass, mm=lepton_mass, helicity=-1, BSMparams=my_hnl, convolve_flux=convolve_flux)
 		
+		# left-handed
+		my_MC = MC.MC_events(HNLtype = HNLtype, mh=my_hnl.m4, mf=0.0, mp=lepton_mass, mm=lepton_mass, helicity=-1, BSMparams=my_hnl, convolve_flux=convolve_flux)
 		my_MC.CCflag1 = vertices[modify_vertex][0]
 		my_MC.CCflag2 = vertices[modify_vertex][1]
 		my_MC.NCflag = vertices[modify_vertex][2]
-		
 		LH = my_MC.get_MC_events()
 
 		combined=[]
 		for i in range(len(LH)):
 			combined.append(np.concatenate((RH[i],LH[i]), axis=0 ))
 
+		# spin averaged
 		phnl, plm, plp, pnu, w = combined 
+		w *= 1/2 
+
 	else:
+
 		my_MC = MC.MC_events(HNLtype = HNLtype, mh=my_hnl.m4, mf=0.0, mp=lepton_mass, mm=lepton_mass, helicity=helicities[HEL], BSMparams=my_hnl, convolve_flux=convolve_flux)
-		
 		my_MC.CCflag1 = vertices[modify_vertex][0]
 		my_MC.CCflag2 = vertices[modify_vertex][1]
 		my_MC.NCflag = vertices[modify_vertex][2]
@@ -86,7 +83,6 @@ def generate_events(MHEAVY, mixings, dipoles=[0,0,0], dark_coupl=[0,0,0,0], HNLt
 				phnl[:, 1],
 				phnl[:, 2],
 				phnl[:, 3]]
-	
 
 	aux_df = pd.DataFrame(np.stack(aux_data, axis=-1), columns=columns_index)
 	aux_df['weight', ''] = w
@@ -97,9 +93,9 @@ def generate_events(MHEAVY, mixings, dipoles=[0,0,0], dark_coupl=[0,0,0,0], HNLt
 	    os.makedirs(PATH_data)
 	if PATH_data[-1] != '/':
 		PATH_data += '/'
+
 	out_file_name = PATH_data+f"MC_m4_{my_hnl.m4:.8g}_mlepton_{lepton_mass:.8g}_hel_{HEL}_{HNLtype}_{modify_vertex}{has_dipole}{has_zprime}.pckl"
 
-	print(out_file_name)
 	aux_df.to_pickle(out_file_name)
 
 
@@ -108,7 +104,14 @@ def radius_of_curvature(p, Bfield):
 	return p/0.3/(Bfield)*1e2
 
 def tilted_circle(R,theta,x):
-	return np.sqrt(R**2 * np.cos(2*theta) + R**2 - 4*x*R*np.sin(theta)-2*x**2)/np.sqrt(2)-R*np.cos(theta)
+
+	z = R**2 * np.cos(2*theta) + R**2 - 4*x*R*np.sin(theta)-2*x**2
+	
+	z = ma.masked_array(data=z,
+						mask = ~(z>0.0),
+						fill_value=np.inf)		
+
+	return np.sqrt(z.filled())/np.sqrt(2) - R*np.cos(theta)
 
 
 def distance_between_particles(theta, R1, R2, x):

@@ -40,50 +40,55 @@ def prob_decay_in_interval(L, d, ctau0, gamma):
 	# return 
 	ell = ctau0*gamma*beta
 	tol = (d/ell > 1e-5)
+	# probability -- if decay length very long, expand exponentials
 	P = ma.masked_array(data=np.exp(-L/ell) * (1 - np.exp(-d/ell)),
 						mask = ~tol,
 						fill_value=d/ell)		
 	return P.filled()
 
 # to be pooled
-def get_lifetime(args, flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0.0,0.0], GX = 0.0):
+def get_lifetime(args, flavor_struct=[1.0,1.0,1.0], dipoles={}, dark_coupl = {}):
 
 	M4, USQR = args
-	
-	my_hnl = model.hnl_model(m4=M4, mixings=USQR*np.array(flavor_struct), dipoles=dipoles, GX = GX)
+
+	mixings = {'Ue4SQR': USQR*flavor_struct[0], 'Umu4SQR': USQR*flavor_struct[1], 'Utau4SQR': USQR*flavor_struct[2]}
+	my_hnl = model.hnl_model(m4=M4, mixings=mixings, dipoles=dipoles, dark_coupl = dark_coupl)
 	my_hnl.set_high_level_variables()
 	my_hnl.compute_rates()
 	
 	return my_hnl.ctau0/c_LIGHT
 
 # to be pooled
-def get_brs(args, channel='nu_e_e', flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0.0,0.0], GX = 0.0):
+def get_brs(args, channel='nu_e_e', flavor_struct=[1.0,1.0,1.0], dipoles={}, dark_coupl = {}):
 
 	M4, USQR = args
-	
-	my_hnl = model.hnl_model(m4=M4, mixings=USQR*np.array(flavor_struct), dipoles=dipoles, GX = GX)
+
+	mixings = {'Ue4SQR': USQR*flavor_struct[0], 'Umu4SQR': USQR*flavor_struct[1], 'Utau4SQR': USQR*flavor_struct[2]}
+	my_hnl = model.hnl_model(m4=M4, mixings=mixings, dipoles=dipoles, dark_coupl = dark_coupl)
 	my_hnl.set_high_level_variables()
 	my_hnl.compute_rates()
 	
 	return my_hnl.brs[channel]
 
 # to be pooled
-def get_gamma_nuee(args, flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0.0,0.0], GX = 0.0):
+def get_gamma_nuee(args, flavor_struct=[1.0,1.0,1.0], dipoles={}, dark_coupl = {}):
 
 	M4, USQR = args
 	
-	my_hnl = model.hnl_model(m4=M4, mixings=USQR*np.array(flavor_struct), dipoles=dipoles, GX = GX)
+	mixings = {'Ue4SQR': USQR*flavor_struct[0], 'Umu4SQR': USQR*flavor_struct[1], 'Utau4SQR': USQR*flavor_struct[2]}
+	my_hnl = model.hnl_model(m4=M4, mixings=mixings, dipoles=dipoles, dark_coupl = dark_coupl)
 	my_hnl.set_high_level_variables()
 	my_hnl.compute_rates()
 	
 	return my_hnl.rates['nu_e_e']
 
 # to be pooled
-def get_event_rate(args, flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0.0,0.0], GX = 0.0, detector = exp.nd280):
+def get_event_rate(args, flavor_struct=[1.0,1.0,1.0], dipoles={}, dark_coupl ={}, detector = exp.nd280):
 
 	M4, USQR = args
 	
-	my_hnl = model.hnl_model(m4=M4, mixings=USQR*np.array(flavor_struct), dipoles=dipoles, GX = GX)
+	mixings = {'Ue4SQR': USQR*flavor_struct[0], 'Umu4SQR': USQR*flavor_struct[1], 'Utau4SQR': USQR*flavor_struct[2]}
+	my_hnl = model.hnl_model(m4=M4, mixings=mixings, dipoles=dipoles, dark_coupl = dark_coupl)
 	my_hnl.set_high_level_variables()
 	my_hnl.compute_rates()
 
@@ -110,24 +115,24 @@ def get_event_rate(args, flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0.0,0.0], GX 
 		tot_events += events*dx
 
 	norm = detector.prop['pots']*detector.prop['area']
-	efficiency = (
+	
+	eff_times_BR = (
 					my_hnl.brs['nu_e_e']*detector.prop['eff_nu_e_e'](M4)
-					# +my_hnl.brs['nu_e_mu']*0.15
-					# +my_hnl.brs['nu_mu_mu']*0.15
-					# +my_hnl.brs['mu_pi']*0.3
-					)
+				)
 
-	return tot_events*norm*efficiency
+	return tot_events*norm*eff_times_BR
 
-def get_event_rate_w_mixing_and_dipole(args, m4=0.250, flavor_struct=[1.0,1.0,1.0], GX = 0.0, detector = exp.nd280):
-	return get_event_rate((m4, args[1]), dipoles=[0.0, args[0], 0.0], flavor_struct=flavor_struct, GX=GX, detector=detector) 
+def get_event_rate_w_mixing_and_dipole(args, m4=0.250, flavor_struct=[1.0,1.0,1.0], dark_coupl = {}, detector = exp.nd280):
+	return get_event_rate((m4, args[1]), dipoles={'dip_mu4': args[0]}, flavor_struct=flavor_struct, dark_coupl=dark_coupl, detector=detector) 
 
 
-def get_event_rate_mode(args, modes, flavor_struct=[1.0,1.0,1.0], dipoles=[0.0,0.0,0.0], GX = 0.0, detector = exp.nd280):
+## deprecated
+def get_event_rate_mode(args, modes, flavor_struct=[1.0,1.0,1.0], dipoles={}, dark_coupl = {}, detector = exp.nd280):
 
 	M4, USQR = args
 	
-	my_hnl = model.hnl_model(m4=M4, mixings=USQR*np.array(flavor_struct), dipoles=dipoles, GX = GX)
+	mixings = {'Ue4SQR': USQR*flavor_struct[0], 'Umu4SQR': USQR*flavor_struct[1], 'Utau4SQR': USQR*flavor_struct[2]}
+	my_hnl = model.hnl_model(m4=M4, mixings=mixings, dipoles=dipoles, dark_coupl = dark_coupl)
 	my_hnl.set_high_level_variables()
 	my_hnl.compute_rates()
 

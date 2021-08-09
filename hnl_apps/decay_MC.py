@@ -10,7 +10,7 @@ from . import decay_integrands as integrands
 
 # Integration parameters
 NINT = 20
-NEVAL = 2e4
+NEVAL = 5e4
 
 NINT_warmup = 20
 NEVAL_warmup = 1e3

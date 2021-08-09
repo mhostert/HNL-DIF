@@ -69,6 +69,26 @@ class experiment():
 			}
 
 		elif self.EXP_FLAG == flag_nd280_fhc:
+
+			##############################################################################
+			# Including extrapolation and interpolation of t2k efficiencies by hand
+			masses_t2k = np.linspace(140, 490, 36)
+			main_folder = f'{local_dir}/../nd280-heavy-neutrino-search-2018_main/'
+			eff_filename = 'efficiency.npy'
+			eff = np.load(main_folder+eff_filename)
+
+			nuPOT = 12.34e20
+			nubarPOT = 6.29e20
+			eff_nu = eff[:, 10, :5]
+			summed_eff = np.sum(eff_nu, axis=1)
+
+			stop_index_fit=17
+			func_extrap = np.polynomial.polynomial.Polynomial.fit(masses_t2k[:stop_index_fit], 
+			                                           summed_eff[:stop_index_fit], 
+			                                           deg=1)
+			func_interp = interpolate.interp1d(masses_t2k, summed_eff, bounds_error=False, fill_value=0)
+
+
 			self.prop = {
 				"name" : "nd280/FHC",
 				# nus/cm^2/50 MeV/1e21 POT
@@ -76,7 +96,7 @@ class experiment():
 				"area" : 1.7e2*1.96e2, # cm^2
 				"length" : 56*3, # cm
 				"baseline" : 280e2, # cm
-				"eff_nu_e_e" : lambda x: 1,
+				"eff_nu_e_e" : lambda x: np.heaviside(x*1e3-140,0)*func_interp(x*1e3) + np.heaviside(-x*1e3+140,0)*func_extrap(x*1e3),
 				"emin" : 0.05,
 				"emax" : 10.0,
 				"pots" : 12.34e20,
@@ -84,6 +104,23 @@ class experiment():
 			}
 		
 		elif self.EXP_FLAG == flag_nd280_rhc:
+
+			##############################################################################
+			# Including extrapolation and interpolation of t2k efficiencies by hand
+			masses_t2k = np.linspace(140, 490, 36)
+			main_folder = f'{local_dir}/../nd280-heavy-neutrino-search-2018_main/'
+			eff_filename = 'efficiency.npy'
+			eff = np.load(main_folder+eff_filename)
+
+			eff_nubar = eff[:, 10, 5:]
+			summed_eff = np.sum(eff_nubar, axis=1)
+
+			stop_index_fit=17
+			func_extrap = np.polynomial.polynomial.Polynomial.fit(masses_t2k[:stop_index_fit], 
+			                                           summed_eff[:stop_index_fit], 
+			                                           deg=1)
+			func_interp = interpolate.interp1d(masses_t2k, summed_eff, bounds_error=False, fill_value=0)
+
 			self.prop = {
 				"name" : "nd280/RHC",
 				# nus/cm^2/50 MeV/1e21 POT
@@ -91,7 +128,7 @@ class experiment():
 				"area" : 1.7e2*1.96e2, # cm^2
 				"length" : 56*3, # cm
 				"baseline" : 280e2, # cm
-				"eff_nu_e_e" : lambda x: 1,
+				"eff_nu_e_e" : lambda x: np.heaviside(x*1e3-140,0)*func_interp(x*1e3) + np.heaviside(-x*1e3+140,0)*func_extrap(x*1e3),
 				"emin" : 0.05,
 				"emax" : 10.0,
 				"pots" : 6.29e20,

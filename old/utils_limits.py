@@ -1,6 +1,5 @@
 import numpy as np
 from scipy.special import erf, erfinv
-from HNL_MC import *
 
 masses_t2k = np.linspace(140, 490, 36)
 masses_all = np.linspace(10, 490, 49)

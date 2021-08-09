@@ -11,7 +11,7 @@ import os
 from scipy import interpolate
 
 ##
-# Which constraints do you want to exclude from the final combination
+# Which constraints to exclude from the final combination
 EXCLUDE_THESE_CONSTRAINTS = [22]
 
 
