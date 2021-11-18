@@ -206,8 +206,8 @@ class experiment():
 
 
 nd280    = experiment(flag_nd280)
-# nd280_fhc = experiment(flag_nd280_fhc)
-# nd280_rhc = experiment(flag_nd280_rhc)
+nd280_fhc = experiment(flag_nd280_fhc)
+nd280_rhc = experiment(flag_nd280_rhc)
 ps191 = experiment(flag_ps191)
 # ps191_proposal = experiment(flag_ps191_proposal)
 

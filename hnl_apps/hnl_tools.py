@@ -83,7 +83,7 @@ def get_gamma_nuee(args, flavor_struct=[1.0,1.0,1.0], dipoles={}, dark_coupl = {
 	return my_hnl.rates['nu_e_e']
 
 # to be pooled
-def get_event_rate(args, flavor_struct=[1.0,1.0,1.0], dipoles={}, dark_coupl ={}, detector = exp.nd280):
+def get_event_rate(args, flavor_struct=[1.0,1.0,1.0], dipoles={}, dark_coupl={}, detector=exp.nd280, eff=True, modes=['nu_e_e']):
 
 	M4, USQR = args
 	
@@ -114,20 +114,24 @@ def get_event_rate(args, flavor_struct=[1.0,1.0,1.0], dipoles={}, dark_coupl ={}
 											gamma)*fN(pN)		
 		tot_events += events*dx
 
-	norm = detector.prop['pots']*detector.prop['area']
+	tot_events *= detector.prop['pots']*detector.prop['area']
 	
-	eff_times_BR = (
-					my_hnl.brs['nu_e_e']*detector.prop['eff_nu_e_e'](M4)
-				)
-
-	return tot_events*norm*eff_times_BR
+	events_out = np.zeros(len(modes))
+	for i, mode in enumerate(modes):
+		events_out[i] = tot_events * my_hnl.brs[mode]
+		if eff:
+			events_out[i] *= detector.prop[f'eff_{mode}'](M4)
+	if len(modes) == 1:
+		return events_out[0]
+	else:
+		return events_out
 
 def get_event_rate_w_mixing_and_dipole(args, m4=0.250, flavor_struct=[1.0,1.0,1.0], dark_coupl = {}, detector = exp.nd280):
 	return get_event_rate((m4, args[1]), dipoles={'dip_mu4': args[0]}, flavor_struct=flavor_struct, dark_coupl=dark_coupl, detector=detector) 
 
 
 ## deprecated
-def get_event_rate_mode(args, modes, flavor_struct=[1.0,1.0,1.0], dipoles={}, dark_coupl = {}, detector = exp.nd280):
+# def get_event_rate_mode(args, modes, flavor_struct=[1.0,1.0,1.0], dipoles={}, dark_coupl = {}, detector = exp.nd280):
 
 	M4, USQR = args
 	
@@ -148,7 +152,6 @@ def get_event_rate_mode(args, modes, flavor_struct=[1.0,1.0,1.0], dipoles={}, da
 		
 		# integrate N spectrum
 		events = 0
-		norm = detector.prop['pots']*detector.prop['area']
 		for pN in x:
 			#boost
 			gamma = np.sqrt(pN**2+my_hnl.m4**2)/my_hnl.m4
@@ -160,9 +163,10 @@ def get_event_rate_mode(args, modes, flavor_struct=[1.0,1.0,1.0], dipoles={}, da
 
 		tot_events += events
 
+	norm = detector.prop['pots']*detector.prop['area']
 	tot_events *= norm*dx
     
-	events = np.zeros(len(modes))
+	events_out = np.zeros(len(modes))
 	for i, mode in enumerate(modes):
-		events[i] = tot_events * my_hnl.brs[mode]
-	return events
+		events_out[i] = tot_events * my_hnl.brs[mode]
+	return events_out
