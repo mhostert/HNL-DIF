@@ -1,0 +1,70 @@
+This is BibTeX, Version 0.99d (TeX Live 2020)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: main.aux
+The style file: apsrev4-1.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Database file #1: mainNotes.bib
+Database file #2: lib.bib
+Warning--I didn't find a database entry for ""
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+merlin.mbs apsrev4-1.bst 2010-07-25 4.21a (PWD, AO, DPC) hacked
+Control: key (0) 
+Control: author (72) initials jnrlst
+Control: editor formatted (1) identically to author
+Control: production of article title (-1) disabled
+Control: page (0) single
+Control: year (1) truncated
+Control: production of eprint (0) enabled
+Warning--missing journal in Vergani:2021tgc
+Warning--missing journal in T2K:2019bbb
+Warning--missing journal in Abe:2016tii
+Warning--missing journal in Kelly:2021xbv
+Warning--missing journal in MicroBooNE:2021ewq
+You've used 83 entries,
+            5847 wiz_defined-function locations,
+            2238 strings with 30405 characters,
+and the built_in function-call counts, 79159 in all, are:
+= -- 5392
+> -- 1829
+< -- 477
++ -- 593
+- -- 420
+* -- 12574
+:= -- 7872
+add.period$ -- 83
+call.type$ -- 83
+change.case$ -- 337
+chr.to.int$ -- 78
+cite$ -- 88
+duplicate$ -- 7401
+empty$ -- 5935
+format.name$ -- 1110
+if$ -- 15635
+int.to.chr$ -- 6
+int.to.str$ -- 91
+missing$ -- 923
+newline$ -- 317
+num.names$ -- 240
+pop$ -- 2909
+preamble$ -- 1
+purify$ -- 412
+quote$ -- 0
+skip$ -- 2888
+stack$ -- 0
+substring$ -- 2086
+swap$ -- 7049
+text.length$ -- 194
+text.prefix$ -- 0
+top$ -- 8
+type$ -- 1123
+warning$ -- 5
+while$ -- 233
+width$ -- 0
+write$ -- 767
+(There were 6 warnings)

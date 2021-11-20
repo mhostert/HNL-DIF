@@ -18,16 +18,16 @@ from .exp import *
 
 fsize=11
 rcparams={'axes.labelsize':fsize,'xtick.labelsize':fsize,'ytick.labelsize':fsize,\
-				'figure.figsize':(1.2*3.7,1.4*2.3617)	}
+				'figure.figsize':(1.2*3.7,1.3*2.3617)	}
 rc('text', usetex=True)
 rc('font',**{'family':'serif', 'serif': ['Computer Modern Roman']})
 rcParams.update(rcparams)
 matplotlib.rcParams['hatch.linewidth'] = 0.3
 
-axes_form  = [0.158,0.14,0.81,0.80]
-def std_fig(ax_form=axes_form, rasterized=True):
+axes_form  =[0.16,0.16,0.81,0.76]
+def std_fig(ax_form=axes_form, rasterized=False):
     fig = plt.figure()
-    ax = fig.add_axes(axes_form, rasterized=rasterized)
+    ax = fig.add_axes(ax_form, rasterized=rasterized)
     ax.patch.set_alpha(0.0)
     return fig,ax
 
@@ -274,7 +274,7 @@ def my_histogram(ax, df, var, color='black',label=r'new', density=True, ls='-', 
                edgecolor=color,
                histtype='step',
                 density=density,
-                 lw=1.5, zorder=1)
+                 lw=1.5, zorder=1, rasterized= True)
 
     out = ax.hist(df[var, '']*units, 
                label=label,
@@ -287,7 +287,7 @@ def my_histogram(ax, df, var, color='black',label=r'new', density=True, ls='-', 
                 density=density,
                  lw=0.0,
                  zorder=1,
-                 alpha =1)
+                 alpha =1, rasterized= True)
 
 
 def error_histogram(ax, df, var, color='black', label=r'new', density=True, ls='-', var_range=(0,1), units = 1, hatch='', cumulative=False):

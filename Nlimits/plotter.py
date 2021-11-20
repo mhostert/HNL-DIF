@@ -8,24 +8,24 @@ from . import umu4
 from .constraint_dict import *
 
 fsize=11
-rc('text', usetex=False)
-params={'axes.labelsize':fsize,'xtick.labelsize':fsize,'ytick.labelsize':fsize,\
-				'figure.figsize':(1.2*3.7,1.4*2.3617)	}
-rc('font',**{'family':'serif', 'serif': ['computer modern roman']})
-rcParams.update(params)
-axes_form  = [0.18,0.18,0.78,0.74]
+rcparams={'axes.labelsize':fsize,'xtick.labelsize':fsize,'ytick.labelsize':fsize,\
+                'figure.figsize':(1.2*3.7,1.3*2.3617)   }
+rc('text', usetex=True)
+rc('font',**{'family':'serif', 'serif': ['Computer Modern Roman']})
+rcParams.update(rcparams)
+axes_form  =[0.15,0.16,0.82,0.76]
 
 label={"e" : r"$|U_{e 4}|^2$", 
        "mu" : r"$|U_{\mu 4}|^2$", 
        "tau" : r"$|U_{\tau 4}|^2$"}
 
-def plot_bound(ax,bound, label='', color='black', lw=0.5, units=1):
+def plot_bound(ax,bound, label='', color='black', lw=0.5, units=1, rasterized=False):
     MN,usqr_bound = bound
     ##############################################
     # Constraints on U\alpha4^2
-    l1, = ax.plot(MN*units, usqr_bound, label=label, color=color, lw=lw)
+    l1, = ax.plot(MN*units, usqr_bound, label=label, color=color, lw=lw, rasterized=rasterized)
     ax.fill_between(MN*units, usqr_bound, np.ones(np.size(MN)), 
-                    fc='lightgrey', ec='None', lw =0.0, alpha=1)
+                    fc='lightgrey', ec='None', lw =0.0, alpha=1,rasterized=rasterized)
     return l1
 
 def plot_ID_individual(axis,listoffiles):

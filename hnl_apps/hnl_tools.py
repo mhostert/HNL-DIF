@@ -148,7 +148,6 @@ def get_event_rate_mode(args, modes, flavor_struct=[1.0,1.0,1.0], dipoles={}, da
 		
 		# integrate N spectrum
 		events = 0
-		norm = detector.prop['pots']*detector.prop['area']
 		for pN in x:
 			#boost
 			gamma = np.sqrt(pN**2+my_hnl.m4**2)/my_hnl.m4
@@ -159,10 +158,15 @@ def get_event_rate_mode(args, modes, flavor_struct=[1.0,1.0,1.0], dipoles={}, da
 											gamma)*fN(pN)
 
 		tot_events += events
-
+	
+	norm = detector.prop['pots']*detector.prop['area']
+	
 	tot_events *= norm*dx
     
 	events = np.zeros(len(modes))
 	for i, mode in enumerate(modes):
-		events[i] = tot_events * my_hnl.brs[mode]
+		events[i] = tot_events * my_hnl.brs[mode] * detector.prop[f'eff_{mode}'](M4)
+
 	return events
+
+

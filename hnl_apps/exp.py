@@ -167,6 +167,9 @@ class experiment():
 				"length" : 12e2, # cm
 				"baseline" : 128e2, # cm
 				"eff_nu_e_e" : lambda x: 0.3,
+				"eff_nu_e_mu" : lambda x: 0.3,
+				"eff_nu_mu_mu" : lambda x: 0.3,
+				"eff_mu_pi" : lambda x: 0.3,
 				"emin" : 0.05,
 				"emax" : 7.0,
 				"pots" : 0.89e19,
@@ -176,7 +179,7 @@ class experiment():
 		elif self.EXP_FLAG == flag_ps191_proposal:
 			self.prop = {
 				"name" : "ps191_proposal",
-				"flux_norm" : 1.0/1e19/1e4/0.25,
+				"flux_norm" : 1.0/0.89e19/6/3e4/0.2,
 				"area" : 6e2*3e2, # cm^2
 				"length" : 12e2, # cm
 				"baseline" : 123e2, # cm
@@ -206,8 +209,8 @@ class experiment():
 
 
 nd280    = experiment(flag_nd280)
-# nd280_fhc = experiment(flag_nd280_fhc)
-# nd280_rhc = experiment(flag_nd280_rhc)
+nd280_fhc = experiment(flag_nd280_fhc)
+nd280_rhc = experiment(flag_nd280_rhc)
 ps191 = experiment(flag_ps191)
 # ps191_proposal = experiment(flag_ps191_proposal)
 
