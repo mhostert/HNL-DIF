@@ -1,10 +1,5 @@
 import numpy as np
-from scipy import interpolate
-import scipy.stats
-import matplotlib.pyplot as plt
-from scipy.integrate import quad
 
-from particle import Particle
 from particle import literals as lp
 
 from .const import *
@@ -90,7 +85,7 @@ def nui_nu_P(params, initial_neutrino, final_neutrino, final_hadron):
         fp  = f_neutral_eta
     else:
         fp=0
-        print(f"Hadron {final.hadron} not supported")
+        print(f"Hadron {final_hadron} not supported")
 
     rate = (Gf*fp*NC_mixing)**2*mh**3/(32*np.pi)*(1-(mp/mh)**2)**2
 

@@ -2,14 +2,13 @@ import numpy as np
 import numpy.ma as ma
 import scipy 
 
+import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.pyplot import *
 
 from matplotlib import rc, rcParams
 import matplotlib.patches as patches
-from matplotlib.legend_handler import HandlerLine2D
 import matplotlib.tri as tri
-from matplotlib import cm
 from matplotlib.font_manager import *
 
 from .const import *
@@ -25,8 +24,8 @@ rcParams.update(rcparams)
 matplotlib.rcParams['hatch.linewidth'] = 0.3
 
 axes_form  =[0.16,0.16,0.81,0.76]
-def std_fig(ax_form=axes_form, rasterized=False):
-    fig = plt.figure()
+def std_fig(ax_form=axes_form, rasterized=False, figsize=(1.2*3.7,1.3*2.3617)):
+    fig = plt.figure(figsize=figsize)
     ax = fig.add_axes(ax_form, rasterized=rasterized)
     ax.patch.set_alpha(0.0)
     return fig,ax
