@@ -95,6 +95,22 @@ def nui_nu_P(params, initial_neutrino, final_neutrino, final_hadron):
     return rate
 
 
+def nui_nu_alp(params, initial_neutrino, final_neutrino):
+
+    mh = params.m4
+
+    NC_mixing = np.sqrt(in_tau_doublet(final_neutrino)*params.Utau4**2
+                    + in_mu_doublet(final_neutrino)*params.Umu4**2
+                    + in_e_doublet(final_neutrino)*params.Ue4**2)
+
+    rate = params.cN**2*NC_mixing**2*mh**3/128/np.pi/params.fa_alp**2 * (1 - params.m_alp**2 /mh**2)**2
+
+    if params.HNLtype == 'majorana':
+        rate *= 2
+
+    return rate
+
+
 def nui_nuj_ell1_ell2(params, initial_neutrino, final_neutrino, lepton_minus, lepton_plus):
   
     M = params.m4

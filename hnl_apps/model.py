@@ -49,6 +49,14 @@ class hnl_model():
 			self.UD4		= 1.0
 			self.UD5		= 0.0
 
+		elif 'fa_alp' in dark_coupl:
+			if dark_coupl.keys() > {'fa_alp'}:
+				warnings.warn("Warning: overriding dark couplings with fa_alp.")
+
+			self.fa_alp 	= dark_coupl['fa_alp']
+			self.m_alp		= dark_coupl['m_alp']
+			self.cN         = dark_coupl['c_N']
+
 		else:
 			# kinetic mixing parameters
 			if 'chi' in dark_coupl:
@@ -198,6 +206,7 @@ class hnl_model():
 		rates['e_K'] = 0
 		rates['mu_pi'] = 0
 		rates['mu_K'] = 0
+		rates['nu_alp'] = 0
 
 		for nu_a in neutrinos:			# nu gamma 
 			rates['nu_gamma'] += nui_nuj_gamma(self, N4, nu_a)
@@ -214,7 +223,8 @@ class hnl_model():
 				rates['nu_pi'] += nui_nu_P(self, N4, nu_a, lp.pi_0)
 			if mh > lp.eta.mass/1e3:
 				rates['nu_eta'] += nui_nu_P(self, N4, nu_a, lp.eta)
-			
+			if mh > self.m_alp:
+				rates['nu_alp'] += nui_nu_alp(self, N4, nu_a)
 
 		# CC-only channels	
 		# pseudoscalar -- factor of 2 for delta L=2 channel 
