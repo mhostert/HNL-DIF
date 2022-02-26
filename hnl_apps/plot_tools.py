@@ -1,6 +1,7 @@
 import numpy as np
 import numpy.ma as ma
 import scipy 
+from scipy.interpolate import splprep, splev
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -76,6 +77,42 @@ def interp_grid(x,y,z, fine_gridx=False, fine_gridy=False, logx=False, logy=Fals
             Zi = scipy.ndimage.filters.gaussian_filter(Zi, smear_stddev, mode='nearest', order = 0, cval=0)
     
     return Xi, Yi, Zi
+
+
+def plot_closed_region(points, logx=False, logy=False):
+    x,y = points
+    if logy:
+        if (y==0).any():
+            raise ValueError("y values cannot contain any zeros in log mode.")
+        sy = np.sign(y)
+        ssy = ((np.abs(y)<1)*(-1) + (np.abs(y)>1)*(1))
+        y  = ssy*np.log(y*sy)
+    if logx:
+        if (x==0).any():
+            raise ValueError("x values cannot contain any zeros in log mode.")
+        sx  = np.sign(x)
+        ssx = ((x<1)*(-1) + (x>1)*(1))
+        x  = ssx*np.log(x*sx)
+
+    points = np.array([x,y]).T
+
+    points_s     = (points - points.mean(0))
+    angles       = np.angle((points_s[:,0] + 1j*points_s[:,1]))
+    points_sort  = points_s[angles.argsort()]
+    points_sort += points.mean(0)
+
+    tck, u = splprep(points_sort.T, u=None, s=0.0, per=0, k=1)
+    u_new = np.linspace(u.min(), u.max(), len(points[:,0]))
+    x_new, y_new = splev(u_new, tck, der=0)
+    
+    if logx:
+        x_new = sx*np.exp(ssx*x_new) 
+    if logy:
+        y_new = sy*np.exp(ssy*y_new) 
+
+    return x_new, y_new
+
+
 
 ################################################
 # AUXIALIARY FOR RECASTS OF CONSTRAINTS

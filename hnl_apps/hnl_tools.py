@@ -149,6 +149,11 @@ def get_event_rate(args, flavor_struct=[1.0,1.0,1.0], dipoles={}, dark_coupl={},
 def get_event_rate_w_mixing_and_dipole(args, m4=0.250, flavor_struct=[1.0,1.0,1.0], dark_coupl = {}, detector = exp.nd280):
 	return get_event_rate((m4, args[1]), dipoles={'dip_mu4': args[0]}, flavor_struct=flavor_struct, dark_coupl=dark_coupl, detector=detector) 
 
+def get_event_rate_w_mixing_and_inv_fa(args, m4=0.250, flavor_struct=[1.0,1.0,1.0], dark_coupl = {}, detector = exp.nd280):
+	d = dark_coupl
+	d['inv_f_alp'] = args[0]
+	return get_event_rate((m4, args[1]), dark_coupl=d, flavor_struct=flavor_struct, detector=detector) 
+
 
 ## deprecated
 # def get_event_rate_mode(args, modes, flavor_struct=[1.0,1.0,1.0], dipoles={}, dark_coupl = {}, detector = exp.nd280):
