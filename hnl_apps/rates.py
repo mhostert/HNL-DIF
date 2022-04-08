@@ -16,6 +16,9 @@ def lam(a,b,c):
 def I1_2body(x,y):
     return (1 - y - x * (2 + y - x) )*kallen_sqrt(1.0,x,y)
 
+def I1_2body_vector(x_V,x_lep):
+    return ( (1 - x_V**2)*(1+2*x_V**2) + x_lep**2*(x_V**2 + x_lep**2 - 2) )*kallen_sqrt(1.0,x_V**2,x_lep**2)
+
 def L(x):
     if np.size(x)>1:
         mask = [x>0.05]
@@ -67,8 +70,16 @@ def nui_l_P(params, initial_neutrino, final_lepton, final_hadron):
     elif(final_hadron==lp.K_plus):
         Vqq = Vus
         fp  = f_charged_kaon
+    elif(final_hadron==lp.D_plus):
+        Vqq = Vcd
+        fp = f_charged_D
+    elif(final_hadron==lp.D_s_plus):
+        Vqq = Vcs
+        fp = f_charged_Ds
     else:
-        print(f"Meson {final_hadron.name} no supported.")
+        Vqq =0
+        fp = 0
+        print(f"Final state N --> {final_lepton} + {final_hadron} not supported. Neglecting this channel.")
 
 
     rate = (Gf*fp*CC_mixing*Vqq)**2 * mh**3/(16*np.pi) * I1_2body((ml/mh)**2, (mp/mh)**2)
@@ -92,9 +103,11 @@ def nui_nu_P(params, initial_neutrino, final_neutrino, final_hadron):
         fp  = f_neutral_pion
     elif(final_hadron==lp.eta):
         fp  = f_neutral_eta
+    elif(final_hadron==lp.D_0):
+        fp  = f_neutral_D
     else:
-        fp=0
-        print(f"Hadron {final_hadron} not supported")
+        fp  = 0
+        print(f"Final state N --> {final_neutrino} + {final_hadron} not supported. Neglecting this channel.")
 
     rate = (Gf*fp*NC_mixing)**2*mh**3/(32*np.pi)*(1-(mp/mh)**2)**2
 
@@ -103,6 +116,63 @@ def nui_nu_P(params, initial_neutrino, final_neutrino, final_hadron):
 
     return rate
 
+
+def nui_nu_V(params, initial_neutrino, final_neutrino, final_hadron):
+
+    mh = params.m4
+    mV = final_hadron.mass/1e3
+    
+    NC_mixing = np.sqrt(in_tau_doublet(final_neutrino)*params.Utau4**2
+                    + in_mu_doublet(final_neutrino)*params.Umu4**2
+                    + in_e_doublet(final_neutrino)*params.Ue4**2)
+
+    if (final_hadron==lp.rho_770_0):
+        gV  = 1 - 2*s2w
+        fV  = f_neutral_rho
+    elif(final_hadron==lp.omega_782):
+        gV  = 2/3*s2w
+        fV  = f_neutral_omega
+    elif(final_hadron==lp.phi_1020):
+        gV  = -np.sqrt(2)*(1/2 - 2/3*s2w)
+        fV  = f_neutral_phi
+    elif(final_hadron==lp.Kst_892_0):
+        gV  = 1 ## FIX-ME
+        fV  = f_neutral_Kstar
+    else:
+        fV=0
+        gV=0
+        print(f"Final state N --> {final_neutrino} + {final_hadron} not supported. Neglecting this channel.")
+   
+    xV = mV/mh
+    rate = (Gf*fV*NC_mixing*gV)**2*mh**3/(32*np.pi)/mV**2 * (1 + 2*xV**2)*(1-xV**2)**2
+
+    if params.HNLtype == 'majorana':
+        rate *= 2
+
+    return rate
+
+def nui_l_V(params, initial_neutrino, final_lepton, final_hadron):
+
+    mh = params.m4
+    mV = final_hadron.mass/1e3
+    ml = final_lepton.mass/1e3
+    
+    # Mixing required for CC N-like
+    CC_mixing = np.sqrt(in_tau_doublet(final_lepton)*params.Utau4**2
+                    + in_mu_doublet(final_lepton)*params.Umu4**2
+                    + in_e_doublet(final_lepton)*params.Ue4**2)
+
+    if (final_hadron==lp.Kst_892_plus):
+        Vqq = Vus
+        fV  = f_charged_Kstar
+    else:
+        fV=0
+        print(f"Final state N --> {final_lepton} + {final_hadron} not supported. Neglecting this channel.")
+
+    rate = (Gf*fV*CC_mixing*Vqq)**2 * mh**3/(16*np.pi)/mV**2 * I1_2body_vector(mV/mh,ml/mh)
+    if params.HNLtype == 'majorana':
+        rate *= 2
+    return rate
 
 def nui_nuj_ell1_ell2(params, initial_neutrino, final_neutrino, lepton_minus, lepton_plus):
   

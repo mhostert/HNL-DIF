@@ -229,17 +229,37 @@ class hnl_model():
 		self.rates['nu_gamma'] = 0
 		self.rates['nu_e_e'] = 0
 		self.rates['nu_mu_mu'] = 0
+		self.rates['nu_tau_tau'] = 0
 		self.rates['nu_e_mu'] = 0
+		self.rates['nu_e_tau'] = 0
+		self.rates['nu_mu_tau'] = 0
 		self.rates['nu_pi'] = 0 
 		self.rates['nu_eta'] = 0
+		self.rates['nu_D'] = 0
+		self.rates['nu_rho'] = 0
+		self.rates['nu_omega'] = 0
+		self.rates['nu_phi'] = 0
+		self.rates['nu_Kstar'] = 0
 		self.rates['e_pi'] = 0
 		self.rates['e_K'] = 0
+		self.rates['e_Kstar'] = 0
+		self.rates['e_D'] = 0
+		self.rates['e_Ds'] = 0
 		self.rates['mu_pi'] = 0
 		self.rates['mu_K'] = 0
+		self.rates['mu_Kstar'] = 0
+		self.rates['mu_D'] = 0
+		self.rates['mu_Ds'] = 0
+		self.rates['tau_pi'] = 0
+		self.rates['tau_K'] = 0
+		self.rates['tau_Kstar'] = 0
+		self.rates['tau_D'] = 0
+		self.rates['tau_Ds'] = 0
 
 		for nu_a in neutrinos:			# nu gamma 
 			self.rates['nu_gamma'] += nui_nuj_gamma(self, N4, nu_a)
 			# dileptons -- already contains the Delta L = 2 channel
+			# for different flavors, we sum the LNV and LNC channels.
 			if mh > 2*lp.e_minus.mass/1e3:
 				self.rates['nu_e_e'] += nui_nuj_ell1_ell2(self, N4, nu_a, lp.e_minus, lp.e_plus)
 			if mh > lp.e_minus.mass/1e3 + lp.mu_minus.mass/1e3:
@@ -247,25 +267,79 @@ class hnl_model():
 				self.rates['nu_e_mu'] += nui_nuj_ell1_ell2(self, N4, nu_a, lp.mu_minus, lp.e_plus)
 			if mh > 2*lp.mu_minus.mass/1e3:
 				self.rates['nu_mu_mu'] += nui_nuj_ell1_ell2(self, N4, nu_a, lp.mu_minus, lp.mu_plus)
+			
+			if mh > lp.e_minus.mass/1e3 + lp.tau_minus.mass/1e3:
+				self.rates['nu_e_tau'] += nui_nuj_ell1_ell2(self, N4, nu_a, lp.e_minus, lp.tau_plus)
+				self.rates['nu_e_tau'] += nui_nuj_ell1_ell2(self, N4, nu_a, lp.tau_minus, lp.e_plus)
+			if mh > lp.mu_minus.mass/1e3 + lp.tau_minus.mass/1e3:
+				self.rates['nu_mu_tau'] += nui_nuj_ell1_ell2(self, N4, nu_a, lp.mu_minus, lp.tau_plus)
+				self.rates['nu_mu_tau'] += nui_nuj_ell1_ell2(self, N4, nu_a, lp.tau_minus, lp.mu_plus)
+			if mh > 2*lp.tau_minus.mass/1e3:
+				self.rates['nu_tau_tau'] += nui_nuj_ell1_ell2(self, N4, nu_a, lp.tau_minus, lp.tau_plus)
+			
 			# pseudoscalar -- neutral current
 			if mh > lp.pi_0.mass/1e3:
 				self.rates['nu_pi'] += nui_nu_P(self, N4, nu_a, lp.pi_0)
 			if mh > lp.eta.mass/1e3:
 				self.rates['nu_eta'] += nui_nu_P(self, N4, nu_a, lp.eta)
+			if mh > lp.D_0.mass/1e3:
+				self.rates['nu_D'] += nui_nu_P(self, N4, nu_a, lp.D_0)
+
+			if mh > lp.rho_770_0.mass/1e3:
+				self.rates['nu_rho'] += nui_nu_V(self, N4, nu_a, lp.rho_770_0)
+			if mh > lp.omega_782.mass/1e3:
+				self.rates['nu_omega'] += nui_nu_V(self, N4, nu_a, lp.omega_782)
+			if mh > lp.Kst_892_0.mass/1e3:
+				self.rates['nu_Kstar'] += nui_nu_V(self, N4, nu_a, lp.Kst_892_0)
+			if mh > lp.phi_1020.mass/1e3:
+				self.rates['nu_phi'] += nui_nu_V(self, N4, nu_a, lp.phi_1020)
 
 		# CC-only channels	
-		# pseudoscalar -- factor of 2 for delta L=2 channel 
-		if mh > lp.e_minus.mass/1e3+lp.pi_plus.mass/1e3:
-			self.rates['e_pi'] = nui_l_P(self, N4, lp.e_minus, lp.pi_plus)
-		if mh > lp.e_minus.mass/1e3+lp.K_plus.mass/1e3:
-			self.rates['e_K'] = nui_l_P(self, N4, lp.e_minus, lp.K_plus)
-		
 		# pseudoscalar -- already contain the Delta L = 2 channel
+		if mh > lp.e_minus.mass/1e3+lp.pi_plus.mass/1e3:
+			self.rates['e_pi'] += nui_l_P(self, N4, lp.e_minus, lp.pi_plus)
+		if mh > lp.e_minus.mass/1e3+lp.K_plus.mass/1e3:
+			self.rates['e_K'] += nui_l_P(self, N4, lp.e_minus, lp.K_plus)
+		if mh > lp.e_minus.mass/1e3+lp.Kst_892_plus.mass/1e3:
+			self.rates['e_Kstar'] += nui_l_V(self, N4, lp.e_minus, lp.Kst_892_plus)
+		if mh > lp.e_minus.mass/1e3+lp.D_plus.mass/1e3:
+			self.rates['e_D'] += nui_l_P(self, N4, lp.e_minus, lp.D_plus)
+		if mh > lp.e_minus.mass/1e3+lp.D_s_plus.mass/1e3:
+			self.rates['e_Ds'] += nui_l_P(self, N4, lp.e_minus, lp.D_s_plus)
+
 		if mh > lp.mu_minus.mass/1e3+lp.pi_plus.mass/1e3:
-			self.rates['mu_pi'] = nui_l_P(self, N4, lp.mu_minus, lp.pi_plus)
+			self.rates['mu_pi'] += nui_l_P(self, N4, lp.mu_minus, lp.pi_plus)
 		if mh > lp.mu_minus.mass/1e3+lp.K_plus.mass/1e3:
-			self.rates['mu_K'] = nui_l_P(self, N4, lp.mu_minus, lp.K_plus)
-	
+			self.rates['mu_K'] += nui_l_P(self, N4, lp.mu_minus, lp.K_plus)
+		if mh > lp.mu_minus.mass/1e3+lp.Kst_892_plus.mass/1e3:
+			self.rates['mu_Kstar'] += nui_l_V(self, N4, lp.mu_minus, lp.Kst_892_plus)
+		if mh > lp.mu_minus.mass/1e3+lp.D_plus.mass/1e3:
+			self.rates['mu_D'] += nui_l_P(self, N4, lp.mu_minus, lp.D_plus)
+		if mh > lp.mu_minus.mass/1e3+lp.D_s_plus.mass/1e3:
+			self.rates['mu_Ds'] += nui_l_P(self, N4, lp.mu_minus, lp.D_s_plus)
+
+		if mh > lp.tau_minus.mass/1e3+lp.pi_plus.mass/1e3:
+			self.rates['tau_pi'] += nui_l_P(self, N4, lp.tau_minus, lp.pi_plus)
+		if mh > lp.tau_minus.mass/1e3+lp.K_plus.mass/1e3:
+			self.rates['tau_K'] += nui_l_P(self, N4, lp.tau_minus, lp.K_plus)
+		if mh > lp.tau_minus.mass/1e3+lp.Kst_892_plus.mass/1e3:
+			self.rates['tau_Kstar'] += nui_l_V(self, N4, lp.tau_minus, lp.Kst_892_plus)
+		if mh > lp.tau_minus.mass/1e3+lp.D_plus.mass/1e3:
+			self.rates['tau_D'] += nui_l_P(self, N4, lp.tau_minus, lp.D_plus)
+		if mh > lp.tau_minus.mass/1e3+lp.D_s_plus.mass/1e3:
+			self.rates['tau_Ds'] += nui_l_P(self, N4, lp.tau_minus, lp.D_s_plus)
+
+		# vector mesons
+		if mh > lp.e_minus.mass/1e3+lp.Kst_892_plus.mass/1e3:
+			self.rates['e_Kstar'] += nui_l_V(self, N4, lp.e_minus, lp.Kst_892_plus)
+				# vector mesons
+		if mh > lp.mu_minus.mass/1e3+lp.Kst_892_plus.mass/1e3:
+			self.rates['mu_Kstar'] += nui_l_V(self, N4, lp.mu_minus, lp.Kst_892_plus)
+				# vector mesons
+		if mh > lp.tau_minus.mass/1e3+lp.Kst_892_plus.mass/1e3:
+			self.rates['tau_Kstar'] += nui_l_V(self, N4, lp.tau_minus, lp.Kst_892_plus)
+		
+
 
 		# total decay rate
 		self.rate_total = sum(self.rates.values())

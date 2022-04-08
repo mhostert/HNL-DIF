@@ -72,16 +72,25 @@ m_h_potential = - lamb_quartic*vev_EW**2
 
 ################################################
 # Mesons
-f_charged_pion = 0.1307
-f_charged_kaon = 0.1598
-f_charged_rho = 0.220
+f_charged_pion = 0.1307 # GeV
+f_charged_kaon = 0.1598 # GeV
+f_charged_rho = 0.220 # GeV
+f_charged_Kstar = 0.178 # GeV^2
+f_charged_D = 0.212 # GeV
+f_charged_Ds = 0.249 # GeV
 
-f_neutral_pion = 0.130
-f_neutral_kaon = 0.164
-f_neutral_B = 0.1909
-f_charged_B = 0.1871
-f_neutral_Bs = 0.2272
-f_neutral_eta = 0.210
+f_neutral_pion = 0.130 # GeV
+f_neutral_kaon = 0.164 # GeV
+f_neutral_Kstar = 0.178 # GeV^2
+f_neutral_B = 0.1909 # GeV
+f_charged_B = 0.1871 # GeV
+f_neutral_Bs = 0.2272 # GeV
+f_neutral_eta = 0.210 # GeV
+f_neutral_D = 0.212 # GeV
+
+f_neutral_rho = 0.171 # GeV^2
+f_neutral_omega = 0.155 # GeV^2
+f_neutral_phi = 0.232 # GeV^2
 
 F_neutral_pion = f_neutral_pion/np.sqrt(2.0)
 F_neutral_kaon = f_neutral_kaon/np.sqrt(2.0)
